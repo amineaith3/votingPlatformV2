@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <form class="form" method="POST">
+    <p>Login</p>
+    <div class="group">
+      <input required="true" name="email" class="main-input" type="text">
+      <span class="highlight-span"></span>
+      <label class="label-email">Email</label>
+    </div>
+    <div class="container-1">
+      <div class="group">
+        <input required="true" name="password" class="main-input" type="password">
+        <span class="highlight-span"></span>
+        <label class="label-email">Password</label>
+      </div>
+    </div>
+    <button class="submit">Submit</button>
+  </form>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for message in messages %}
+          <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  <footer>
+    <a href="{{ url_for('contact') }}">Contact Us</a>
+  </footer>
+</body>
+</html>

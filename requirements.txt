@@ -1,3 +1,5 @@
 Flask
 python-dotenv
-werkzeug
+werkzeug        # Adjust the version as necessary
+requests
+firebase-admin

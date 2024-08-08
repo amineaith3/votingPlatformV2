@@ -36,9 +36,19 @@ def read_credentials():
 def read_results():
     response = requests.get(RESULTS_URL)
     if response.status_code == 200:
-        return {line.split(',')[0]: int(line.split(',')[1]) for line in response.text.splitlines()}
+        results = {line.split(',')[0]: int(line.split(',')[1]) for line in response.text.splitlines()}
+        
+        # Ensure all expected choices are in the results
+        choices = ["Novators", "Clavis", "Achievers"]
+        for choice in choices:
+            if choice not in results:
+                results[choice] = 0
+        
+        return results
     else:
-        return {}
+        return {"Novators": 0, "Clavis": 0, "Achievers": 0}
+
+    
 
 def update_results_file(results):
     results_text = "\n".join([f"{choice},{count}" for choice, count in results.items()])
@@ -94,7 +104,12 @@ def vote(email):
     if request.method == 'POST':
         choice = request.form['choice']
         results = read_results()
-        results[choice] += 1
+        
+        if choice in results:
+            results[choice] += 1
+        else:
+            flash('Invalid choice. Please try again.')
+            return render_template('vote.html', email=email)
 
         # Update the results file on Firebase
         update_results_file(results)
@@ -117,13 +132,12 @@ def vote(email):
         # Send notification email to yourself
         admin_subject = f"New Vote from {email}"
         admin_body = f"The email {email} voted for choice {choice}."
-        send_email(admin_subject, sender, admin_body)  # Change 'sender' to your admin email if necessary
+        send_email(admin_subject, sender, admin_body)
 
         flash('Vote submitted successfully!')
         return redirect(url_for('login'))
 
     return render_template('vote.html', email=email)
-
 
 @app.errorhandler(500)
 def internal_error(error):

@@ -1,46 +1,59 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import os
+import json
 import smtplib
+import requests
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from dotenv import load_dotenv
+import firebase_admin
+from firebase_admin import credentials, storage
 
-load_dotenv()  # Load environment variables from .env file
+load_dotenv()
 
 sender = os.getenv('sender')
 password = os.getenv('password')
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Replace with a secure key
+app.secret_key = 'your_secret_key'
+CREDENTIALS_URL = os.getenv('CREDENTIALS_URL')
+RESULTS_URL = os.getenv('RESULTS_URL')
 
-CREDENTIALS_FILE = '.credentials.txt'
-RESULTS_FILE = '.results.txt'
+service_account_key = json.loads(os.getenv('SERVICE_ACCOUNT_KEY'))
 
-# Utility function to read credentials
+# Initialize Firebase Admin
+cred = credentials.Certificate(service_account_key)
+firebase_admin.initialize_app(cred, {
+    'storageBucket': 'votingplatform-4edce.appspot.com'
+})
+
 def read_credentials():
-    with open(CREDENTIALS_FILE, 'r') as f:
-        return [line.strip().split(',') for line in f]
+    response = requests.get(CREDENTIALS_URL)
+    if response.status_code == 200:
+        return [line.strip().split(',') for line in response.text.splitlines()]
+    else:
+        return []
 
-# Utility function to write credentials
-def write_credentials(credentials):
-    with open(CREDENTIALS_FILE, 'w') as f:
-        for credential in credentials:
-            f.write(','.join(credential) + '\n')
-
-# Utility function to read results
 def read_results():
-    with open(RESULTS_FILE, 'r') as f:
-        return {line.split(',')[0]: int(line.split(',')[1]) for line in f}
+    response = requests.get(RESULTS_URL)
+    if response.status_code == 200:
+        return {line.split(',')[0]: int(line.split(',')[1]) for line in response.text.splitlines()}
+    else:
+        return {}
 
-# Utility function to write results
-def write_results(results):
-    with open(RESULTS_FILE, 'w') as f:
-        for choice, count in results.items():
-            f.write(f"{choice},{count}\n")
+def update_results_file(results):
+    results_text = "\n".join([f"{choice},{count}" for choice, count in results.items()])
+    bucket = storage.bucket()
+    blob = bucket.blob('.results.txt')
+    blob.upload_from_string(results_text)
 
-# Utility function to send email
+def update_credentials_file(credentials):
+    # Convert credentials list to text format
+    credentials_text = "\n".join([','.join(credential) for credential in credentials])
+    bucket = storage.bucket()
+    blob = bucket.blob('.credentials.txt')
+    blob.upload_from_string(credentials_text)
+
 def send_email(subject, recipient, body):
-
-
     msg = MIMEMultipart()
     msg['From'] = sender
     msg['To'] = recipient
@@ -65,7 +78,6 @@ def login():
 
         for credential in credentials:
             if credential[0] == email and credential[1] == password and credential[2] == '0':
-                # Successful login, redirect to vote page
                 return redirect(url_for('vote', email=email))
         flash('Invalid credentials or account already used for voting.')
     return render_template('login.html')
@@ -76,15 +88,19 @@ def vote(email):
         choice = request.form['choice']
         results = read_results()
         results[choice] += 1
-        write_results(results)
 
-        # Update user's voting status
+        # Update the results file on Firebase
+        update_results_file(results)
+
+        # Update the user's voting status
         credentials = read_credentials()
         for credential in credentials:
             if credential[0] == email:
-                credential[2] = '1'
+                credential[2] = '1'  # Mark the user as having voted
                 break
-        write_credentials(credentials)
+
+        # Update the credentials file on Firebase
+        update_credentials_file(credentials)
 
         # Send confirmation email
         subject = "Vote Confirmation"
@@ -100,13 +116,12 @@ def vote(email):
 def internal_error(error):
     return render_template('error.html'), 500
 
-
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':
         email = request.form['email']
         message = request.form['message']
-        
+
         # Send email to admin
         subject = "Contact Form Submission"
         body = f"Email: {email}\nMessage: {message}"
@@ -117,9 +132,4 @@ def contact():
     return render_template('contact.html')
 
 if __name__ == '__main__':
-    # Initialize results file if not exists
-    if not os.path.exists(RESULTS_FILE):
-        with open(RESULTS_FILE, 'w') as f:
-            f.write("Choice1,0\nChoice2,0\nChoice3,0\n")
-
     app.run(debug=True)

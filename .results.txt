@@ -1,3 +1,0 @@
-Choice1,0
-Choice2,1
-Choice3,0

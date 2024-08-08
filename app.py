@@ -88,6 +88,7 @@ def login():
     return render_template('login.html')
 
 
+
 @app.route('/vote/<email>', methods=['GET', 'POST'])
 def vote(email):
     if request.method == 'POST':
@@ -108,15 +109,21 @@ def vote(email):
         # Update the credentials file on Firebase
         update_credentials_file(credentials)
 
-        # Send confirmation email
+        # Send confirmation email to the user
         subject = "Vote Confirmation"
         body = f"Hello, we received your vote. You voted for {choice}. Thank you very much!"
         send_email(subject, email, body)
+
+        # Send notification email to yourself
+        admin_subject = f"New Vote from {email}"
+        admin_body = f"The email {email} voted for choice {choice}."
+        send_email(admin_subject, sender, admin_body)  # Change 'sender' to your admin email if necessary
 
         flash('Vote submitted successfully!')
         return redirect(url_for('login'))
 
     return render_template('vote.html', email=email)
+
 
 @app.errorhandler(500)
 def internal_error(error):

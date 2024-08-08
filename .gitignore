@@ -1,3 +1,4 @@
 .env
 serviceAccountKey.json
 manage.py
+manageResults.py

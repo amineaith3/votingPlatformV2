@@ -81,7 +81,7 @@ def login():
                 if credential[2] == '0':
                     return redirect(url_for('vote', email=email))
                 else:
-                    flash('This account has already been used for voting.')
+                    flash('This account has already been used for voting. Please contact the admin in case you didn\'t')
                     return render_template('login.html')
 
         flash('Invalid email or password.')

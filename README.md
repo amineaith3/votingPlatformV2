@@ -1,4 +1,4 @@
-# Voting Platform
+# [Voting Platform](https://ade-vote.vercel.app)
 
 A web application built with Flask that allows ensa students to vote for the favourite ADE candidate. The platform manages user authentication, vote counting, and sends confirmation emails.
 
@@ -25,5 +25,5 @@ A web application built with Flask that allows ensa students to vote for the fav
 ## Devlopement Team
 
 1. Amine Ait Hamma (back-end) : [LinkedIn](https://www.linkedin.com/in/sakuun-aah) | [Github](https://github.com/amineaith3)
-2. Mouad IdKaroum (front-end) : [LinkedIn](https://www.linkedin.com/in/mouad-id-karoum-00b835246/) | [Github](https://github.com/amineaith3)
-3. Rofaida Ait Hamma (front-end) : [LinkedIn](https://www.linkedin.com/in/rofaifa-ait-hamma) | [Github](https://github.com/amineaith3)
+2. Mouad IdKaroum (front-end) : [LinkedIn](https://www.linkedin.com/in/mouad-id-karoum-00b835246/) | [Github](https://github.com/madoox1)
+3. Rofaida Ait Hamma (front-end) : [LinkedIn](https://www.linkedin.com/in/rofaida-ait-hamma) | [Github](https://github.com/Rofaa6)

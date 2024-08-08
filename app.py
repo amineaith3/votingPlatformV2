@@ -77,10 +77,16 @@ def login():
         credentials = read_credentials()
 
         for credential in credentials:
-            if credential[0] == email and credential[1] == password and credential[2] == '0':
-                return redirect(url_for('vote', email=email))
-        flash('Invalid credentials or account already used for voting.')
+            if credential[0] == email and credential[1] == password:
+                if credential[2] == '0':
+                    return redirect(url_for('vote', email=email))
+                else:
+                    flash('This account has already been used for voting.')
+                    return render_template('login.html')
+
+        flash('Invalid email or password.')
     return render_template('login.html')
+
 
 @app.route('/vote/<email>', methods=['GET', 'POST'])
 def vote(email):

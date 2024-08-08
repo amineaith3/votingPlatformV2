@@ -17,7 +17,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 CREDENTIALS_URL = os.getenv('CREDENTIALS_URL')
 RESULTS_URL = os.getenv('RESULTS_URL')
-
+session = {}
 service_account_key = json.loads(os.getenv('SERVICE_ACCOUNT_KEY'))
 
 # Initialize Firebase Admin
@@ -85,10 +85,10 @@ def login():
         email = request.form['email']
         password = request.form['password']
         credentials = read_credentials()
-
         for credential in credentials:
             if credential[0] == email and credential[1] == password:
                 if credential[2] == '0':
+                    session['logged_in_email'] = email  # Set the session variable
                     return redirect(url_for('vote', email=email))
                 else:
                     flash('This account has already been used for voting. Please contact the admin in case you didn\'t')
@@ -97,21 +97,18 @@ def login():
         flash('Invalid email or password.')
     return render_template('login.html')
 
-@app.route('/loaderio-5386797ed41ff2772f101c0ccaa8aad8/')
-def loaderio():
-    return send_from_directory(os.getcwd(), 'loaderio-5386797ed41ff2772f101c0ccaa8aad8.html')
 
 @app.route('/vote/<email>', methods=['GET', 'POST'])
 def vote(email):
+    # Check if the user is logged in
+    if 'logged_in_email' not in session or session['logged_in_email'] != email:
+        flash('You must be logged in to vote.')
+        return redirect(url_for('login'))
+
     if request.method == 'POST':
         choice = request.form['choice']
         results = read_results()
-        
-        if choice in results:
-            results[choice] += 1
-        else:
-            flash('Invalid choice. Please try again.')
-            return render_template('vote.html', email=email)
+        results[choice] += 1
 
         # Update the results file on Firebase
         update_results_file(results)

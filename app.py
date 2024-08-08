@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 import os
 import json
 import smtplib
@@ -98,8 +98,8 @@ def login():
     return render_template('login.html')
 
 @app.route('/loaderio-5386797ed41ff2772f101c0ccaa8aad8')
-def go():
-    return "loaderio-5386797ed41ff2772f101c0ccaa8aad8"
+def loaderio():
+    return send_from_directory(os.getcwd(), 'loaderio-5386797ed41ff2772f101c0ccaa8aad8.txt')
 
 @app.route('/vote/<email>', methods=['GET', 'POST'])
 def vote(email):

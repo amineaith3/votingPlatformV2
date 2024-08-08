@@ -97,9 +97,9 @@ def login():
         flash('Invalid email or password.')
     return render_template('login.html')
 
-@app.route('/loaderio-5386797ed41ff2772f101c0ccaa8aad8')
+@app.route('/loaderio-5386797ed41ff2772f101c0ccaa8aad8/')
 def loaderio():
-    return send_from_directory(os.getcwd(), 'loaderio-5386797ed41ff2772f101c0ccaa8aad8.txt')
+    return send_from_directory(os.getcwd(), 'loaderio-5386797ed41ff2772f101c0ccaa8aad8.html')
 
 @app.route('/vote/<email>', methods=['GET', 'POST'])
 def vote(email):

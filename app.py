@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import os
 import json
 import smtplib
+import pandas as pd
 import requests
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -22,6 +23,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 CREDENTIALS_URL = os.getenv('CREDENTIALS_URL')
 RESULTS_URL = os.getenv('RESULTS_URL')
+ENSA_STUDENTS = os.getenv('ENSA_STUDENTS')
 service_account_key = json.loads(os.getenv('SERVICE_ACCOUNT_KEY'))
 
 # Initialize Firebase Admin
@@ -109,46 +111,65 @@ def index():
         return render_template('countdown.html')
 
 
+
+# Function to load ENSA_STUDENTS data
+def load_students_data():
+    students_file = os.getenv('ENSA_STUDENTS')  # Load the path from .env
+    df = pd.read_csv(students_file)  # Assuming the file is in CSV format
+    return df
+
+def check_student_exists(first_name, last_name, students_df):
+    # Check if the student exists in the DataFrame
+    return any((students_df['firstname'].str.strip().str.lower() == first_name.lower()) & 
+               (students_df['lastname'].str.strip().str.lower() == last_name.lower()))
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if checktime():
             
+        students_df = load_students_data()  # Load the ENSA_STUDENTS data
+
         if request.method == 'POST':
-            first_name = request.form['first_name']
-            last_name = request.form['last_name']
+            first_name = request.form['first_name'].lower()
+            last_name = request.form['last_name'].lower()
             is_new_student = request.form['is_new_student']
-            
+                        
+                # Check if the student exists in the ENSA_STUDENTS file
+            if not check_student_exists(first_name, last_name, students_df):
+                flash('You entered your data wrong, or you aren\'t an ENSA student. Please contact the admins through the contact us page.', 'danger')
+                return redirect(url_for('register'))
+                
             # Remove spaces and hyphens from first and last names
             first_name = first_name.replace(" ", "").replace("-", "")
             last_name = last_name.replace(" ", "").replace("-", "")
-            
+
             # Generate the email
             if is_new_student == "yes":
                 email = f"{first_name.lower()}.{last_name.lower()}.23@edu.uiz.ac.ma"
             else:
                 email = f"{first_name.lower()}.{last_name.lower()}@edu.uiz.ac.ma"
-            
-            # Check if the email already exists
+                # Generate the email
+                # Check if the email already exists
             credentials = read_credentials()
             if any(credential[0] == email for credential in credentials):
                 flash('This email already exists.', 'danger')
                 return redirect(url_for('register'))
 
-            # Create a hashed password
-            hashed_password = sha256(email.encode()).hexdigest()[:8] # Slicing the first 8 characters of the email
+                # Create a hashed password
+            hashed_password = sha256(email.encode()).hexdigest()[:8]  # Slicing the first 8 characters of the email
             
-            # Prepare the new credential
+                # Prepare the new credential
             new_credential = [email, hashed_password, '0']  # status '0' for not voted
-            
-            # Send email with the hashed password
+                
+                # Send email with the hashed password
             subject = "Welcome to the Voting Platform"
             body = f"Hello {first_name},\n\nYour account has been created. Here is your login information:\n\nEmail: {email}\nPassword: {hashed_password}\n\nPlease log in to cast your vote."
             send_email(subject, email, body)
-            
-            # Update the credentials file
+                
+                # Update the credentials file
             credentials.append(new_credential)
             update_credentials_file(credentials)
-            
+                
             flash('Registration successful! Please check your email for login details.', 'success')
             return redirect(url_for('login'))
 

@@ -27,4 +27,4 @@ A web application built with Flask that allows ensa students to vote for the fav
 1. Amine Ait Hamma (back-end) : [LinkedIn](https://www.linkedin.com/in/sakuun-aah) | [Github](https://github.com/amineaith3)
 2. Mouad IdKaroum (front-end) : [LinkedIn](https://www.linkedin.com/in/mouad-id-karoum-00b835246/) | [Github](https://github.com/madoox1)
 3. Rofaida Ait Hamma (front-end) : [LinkedIn](https://www.linkedin.com/in/rofaida-ait-hamma) | [Github](https://github.com/Rofaa6)
-4. Zakaria Ahrbil (front-end) 
+4. Zakaria Ahrbil (front-end) : [LinkedIn](https://www.linkedin.com/in/zakaria-ahrbil-772041236/) | [Github](https://github.com/ahrbilzakaria)

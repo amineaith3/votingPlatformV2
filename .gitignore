@@ -2,3 +2,7 @@
 serviceAccountKey.json
 manage.py
 manageResults.py
+manageData.py
+info1.xlsx
+info1.csv
+credentials.txt

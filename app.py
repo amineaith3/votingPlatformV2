@@ -16,6 +16,7 @@ load_dotenv()
 
 sender = os.getenv('sender')
 password = os.getenv('password')
+password_admin = os.getenv('password-admin')
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 CREDENTIALS_URL = os.getenv('CREDENTIALS_URL')
@@ -134,6 +135,19 @@ def register():
 
     return render_template('register.html')
 
+@app.route('/admin', methods=['GET'])
+def admin():
+    # Check if the user is logged in as admin
+    if 'logged_in_email' not in flask_session or flask_session['logged_in_email'] != sender:
+        flash('Access denied. Admins only.')
+        return redirect(url_for('login'))
+
+    # Fetch results to display
+    results = read_results()
+
+    return render_template('admin.html', results=results)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -165,6 +179,8 @@ def login():
 
 @app.route('/vote/<email>', methods=['GET', 'POST'])
 def vote(email):
+    if email == sender:
+        return redirect(url_for('admin'))
     # Check if the user is logged in
     if 'logged_in_email' not in flask_session or flask_session['logged_in_email'] != email:
         flash('You must be logged in to vote.')

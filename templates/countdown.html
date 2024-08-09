@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/output.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.ico') }}">
+    <title>Countdown</title>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="text-center">
+        <h1 class="text-2xl font-bold mb-4">Countdown to The Vote</h1>
+        <p class="text-lg mb-4" id="message">
+            <!-- Message will be displayed here -->
+        </p>
+        <div id="countdown" class="text-4xl font-bold hidden">
+            <!-- Countdown timer will be displayed here -->
+        </div>
+    </div>
+    
+    <script>
+        // Set the date we're counting down to
+        const countDownDate = new Date("August 10, 2024 20:00:00 GMT+0100").getTime();
+        const endDate = new Date("August 12, 2024 00:00:00 GMT+0100").getTime();
+        const now = new Date().getTime();
+
+        // Get the message element and countdown element
+        const messageElement = document.getElementById("message");
+        const countdownElement = document.getElementById("countdown");
+
+        // Check the current time and display the appropriate message
+        if (now < countDownDate) {
+            messageElement.innerHTML = "Vote didn't start yet.";
+            
+            // Update the countdown every 1 second
+            const x = setInterval(function() {
+                const now = new Date().getTime(); // Update the current time
+                const distance = countDownDate - now;
+
+                // Time calculations for days, hours, minutes, and seconds
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Display the result in the countdown element
+                countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s `;
+
+                // If the countdown is over, redirect to the register page
+                if (distance < 0) {
+                    clearInterval(x);
+                    window.location.href = "{{ url_for('register') }}"; // Redirect to register page
+                }
+            }, 1000);
+        } else if (now >= endDate) {
+            messageElement.innerHTML = "Ydek fih.";
+        } else {
+            countdownElement.classList.remove('hidden'); // Show countdown if it's within the valid range
+        }
+    </script>
+</body>
+</html>

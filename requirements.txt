@@ -4,4 +4,3 @@ werkzeug        # Adjust the version as necessary
 requests
 firebase-admin
 pytz
-pandas

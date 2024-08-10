@@ -880,6 +880,7 @@ video {
   align-items: center;
   justify-content: center;
   height: 100vh;
+  color: white;
 }
 
 .cd {
@@ -977,6 +978,26 @@ label {
   margin-inline: 2rem;
 }
 
+.vt {
+  border: solid 1px white;
+}
+
 input:focus {
   border: solid 1px #081e30;
+}
+
+.ft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  justify-content: center;
+}
+
+.tt {
+  width: 12rem;
+}
+
+.mgs {
+  padding-inline: 2rem;
 }

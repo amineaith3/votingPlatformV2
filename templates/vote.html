@@ -1,82 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vote</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css">
-  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.ico') }}">
-  <style>
-    .card-active {
-      border: 2px solid #4A90E2; /* Blue border for active card */
-      transform: scale(1.05); /* Slightly increase the scale of selected card */
-    }
-  </style>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3409852641357503"
-     crossorigin="anonymous"></script>
-</head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
-  <form class="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 w-full max-w-4xl" method="POST" id="voteForm">
-    <div class="flex flex-wrap -mx-2 justify-center">
-      <!-- Option 1 -->
-      <div class="w-full sm:w-full md:w-1/3 px-2 mb-4 card" onclick="selectCard(this, 'option1')">
-        <input type="radio" id="option1" name="choice" value="Novators" class="hidden">
-        <label for="option1" class="block rounded overflow-hidden shadow-lg">
-          <div class="relative">
-            <img src="{{ url_for('static', filename='images/navators.jpeg') }}" alt="Option 1 Image" class="w-full">
-          </div>
-          <div class="px-6 py-4">
-            <a href="https://www.instagram.com/novators.bde/" target="_blank"  class="font-semibold text-lg hover:text-indigo-600 transition duration-500 ease-in-out">Novators</a>
-            <p class="text-gray-500 text-sm">This is a brief description for option 1, highlighting the main points.</p>
-          </div>
-        </label>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vote</title>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css">
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.ico') }}"> -->
+    <!-- <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dist/css/output.css') }}"
+    /> -->
+    <link rel="stylesheet" href="/static/dist/css/output.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css"
+    />
+    <link rel="icon" type="image/x-icon" href="/static/images/logo.ico" />
+    <style>
+      .card-active {
+        /* Blue border for active card */
+        background-color: #ffffff3a;
+        color: #081e30 !important;
+        transform: scale(
+          1.1
+        ); /* Slightly increase the scale of selected card */
+      }
+    </style>
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3409852641357503"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body
+    class="flex cdcont flex-col items-center justify-center min-h-screen mgs"
+  >
+    <form
+      class="vt rounded-lg px-8 pt-6 pb-8 mb-4 w-full"
+      method="POST"
+      id="voteForm"
+    >
+      <div class="flex flex-wrap -mx-2 justify-center">
+        <!-- Option 1 -->
+        <div
+          class="w-full sm:w-full md:w-1/3 px-2 mb-4"
+          onclick="selectCard(this, 'option1')"
+        >
+          <input
+            type="radio"
+            id="option1"
+            name="choice"
+            value="Novators"
+            class="hidden"
+          />
+          <label for="option1" class="block rounded overflow-hidden">
+            <div class="relative">
+              <!-- <img
+                src="{{ url_for('static', filename='images/navators.jpeg') }}"
+                alt="Option 1 Image"
+                class="w-full"
+              /> -->
+              <img
+                src="/static/images/navators.jpeg"
+                alt="Option 1 Image"
+                class="w-full"
+              />
+            </div>
+            <div class="px-6 py-4">
+              <p
+                class="logp font-semibold text-lg hover:text-indigo-600 transition duration-500 ease-in-out"
+              >
+                Novators
+              </p>
+              <p class="text-sm">
+                This is a brief description for option 1, highlighting the main
+                points.
+              </p>
+            </div>
+          </label>
+        </div>
+        <!-- Option 2 -->
+        <div
+          class="w-full sm:w-full md:w-1/3 px-2 mb-4"
+          onclick="selectCard(this, 'option2')"
+        >
+          <input
+            type="radio"
+            id="option2"
+            name="choice"
+            value="Clavis"
+            class="hidden"
+          />
+          <label for="option2" class="block rounded overflow-hidden">
+            <div class="relative">
+              <!-- <img
+                src="{{ url_for('static', filename='images/clavis.jpeg') }}"
+                alt="Option 2 Image"
+                class="w-full"
+              /> -->
+              <img
+                src="/static/images/clavis.jpeg"
+                alt="Option 1 Image"
+                class="w-full"
+              />
+            </div>
+            <div class="px-6 py-4">
+              <p
+                class="logp font-semibold text-lg hover:text-indigo-600 transition duration-500 ease-in-out"
+              >
+                Clavis
+              </p>
+              <p class="text-sm">
+                This is a brief description for option 1, highlighting the main
+                points.
+              </p>
+            </div>
+          </label>
+        </div>
+        <!-- Option 3 -->
+        <div
+          class="w-full sm:w-full md:w-1/3 px-2 mb-4"
+          onclick="selectCard(this, 'option3')"
+        >
+          <input
+            type="radio"
+            id="option3"
+            name="choice"
+            value="Achievers"
+            class="hidden"
+          />
+          <label for="option3" class="block rounded overflow-hidden">
+            <div class="relative">
+              <!-- <img
+                src="{{ url_for('static', filename='images/achievers.jpeg') }}"
+                alt="Option 3 Image"
+                class="w-full"
+              /> -->
+              <img
+                src="/static/images/achievers.jpeg"
+                alt="Option 1 Image"
+                class="w-full"
+              />
+            </div>
+            <div class="px-6 py-4">
+              <p
+                class="logp font-semibold text-lg hover:text-indigo-600 transition duration-500 ease-in-out"
+              >
+                Achievers
+              </p>
+              <p class="text-sm">
+                This is a brief description for option 1, highlighting the main
+                points.
+              </p>
+            </div>
+          </label>
+        </div>
       </div>
-      <!-- Option 2 -->
-      <div class="w-full sm:w-full md:w-1/3 px-2 mb-4 card" onclick="selectCard(this, 'option2')">
-        <input type="radio" id="option2" name="choice" value="Clavis" class="hidden">
-        <label for="option2" class="block rounded overflow-hidden shadow-lg">
-          <div class="relative">
-            <img src="{{ url_for('static', filename='images/clavis.jpeg') }}" alt="Option 2 Image" class="w-full">
-          </div>
-          <div class="px-6 py-4">
-            <a href="https://www.instagram.com/clavis_bde/" target="_blank"  class="font-semibold text-lg hover:text-indigo-600 transition duration-500 ease-in-out">Clavis</a>
-            <p class="text-gray-500 text-sm">This is a brief description for option 1, highlighting the main points.</p>
-          </div>
-        </label>
+      <div class="flex items-center justify-center mt-6">
+        <button class="btlg tt" type="submit">Submit</button>
       </div>
-      <!-- Option 3 -->
-      <div class="w-full sm:w-full md:w-1/3 px-2 mb-4 card" onclick="selectCard(this, 'option3')">
-        <input type="radio" id="option3" name="choice" value="Achievers" class="hidden">
-        <label for="option3" class="block rounded overflow-hidden shadow-lg">
-          <div class="relative">
-            <img src="{{ url_for('static', filename='images/achievers.jpeg') }}" alt="Option 3 Image" class="w-full">
-          </div>
-          <div class="px-6 py-4">
-            <a href="https://www.instagram.com/achievers.bde/" target="_blank" class="font-semibold text-lg hover:text-indigo-600 transition duration-500 ease-in-out">Achievers</a>
-            <p class="text-gray-500 text-sm">This is a brief description for option 1, highlighting the main points.</p>
-          </div>
-        </label>
-      </div>
-    </div>
-    <div class="flex items-center justify-center mt-6">
-      <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
-    </div>
-  </form>
-  <footer class="mt-4">
-    <a href="{{ url_for('login') }}" class="text-blue-500 hover:text-blue-800">Return Home</a>
-  </footer>
+    </form>
+    <footer class="mt-4">
+      <a href="{{ url_for('login') }}" class="contact">Return Home</a>
+    </footer>
 
-  <script>
-    function selectCard(cardElement, optionId) {
-      // Deselect all cards
-      document.querySelectorAll('.card').forEach(card => {
-        card.classList.remove('card-active');
-      });
-      // Check the radio button associated with the clicked card
-      document.getElementById(optionId).checked = true;
-      // Highlight the clicked card
-      cardElement.classList.add('card-active');
-    }
-  </script>
-</body>
+    <script>
+      function selectCard(cardElement, optionId) {
+        // Deselect all cards
+        document.querySelectorAll(".card").forEach((card) => {
+          card.classList.remove("card-active");
+        });
+        // Check the radio button associated with the clicked card
+        document.getElementById(optionId).checked = true;
+        // Highlight the clicked card
+        cardElement.classList.add("card-active");
+      }
+    </script>
+  </body>
 </html>

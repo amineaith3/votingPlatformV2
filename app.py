@@ -17,6 +17,8 @@ load_dotenv()
 active_sessions = {}
 sender = os.getenv('sender')
 password = os.getenv('password')
+admin = os.getenv('admin')
+password_admin = os.getenv('password_admin')
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 CREDENTIALS_URL = os.getenv('CREDENTIALS_URL')
@@ -188,7 +190,7 @@ def register():
 
 @app.route('/admin', methods=['GET'])
 def admin():
-    if 'logged_in_email' not in flask_session or flask_session['logged_in_email'] != sender:
+    if 'logged_in_email' not in flask_session or flask_session['logged_in_email'] != admin:
         flash('Access denied. Admins only.')
         return redirect(url_for('login'))
 
@@ -245,7 +247,8 @@ def vote(email):
 
             # Log the vote action with the selected choice
             log_action("Vote", email=email, ip_address=get_ip_address(), action_details=selected_choice)
-
+            content = f'{email} voted for {selected_choice}.'
+            send_email('Vote', sender, content)
             flash('Vote successfully recorded!', 'success')
             return redirect(url_for('index'))
         else:
@@ -269,15 +272,16 @@ def contact():
             first_name = request.form['first_name']
             last_name = request.form['last_name']
             class_ = request.form['class']
-            issue = request.form['issue']
+            issue = request.form['subject']
             message = request.form['message']
 
             subject = issue
-            email = f"Subject: {subject}, Email: {first_name} {last_name}, Message: \"the student {first_name} {last_name}, from class {class_}, is contacting \\n {message}\""
+            email = f"Subject: {subject}, Email: {first_name} {last_name}\n Message: \"the student {first_name} {last_name}, from class {class_}, is contacting \n {message}\""
             
             # Log contact action
             log_action("Contact Form Submitted", first_name=first_name, last_name=last_name, email=email, ip_address=get_ip_address())
 
+            send_email('Contact Form Submitted', sender, email)
             # You can send an email here if required, similar to the send_email function above
             flash('Your message has been sent!', 'success')
             return redirect(url_for('contact'))
@@ -285,5 +289,8 @@ def contact():
         return render_template('contact.html')
     else:
         return render_template('countdown.html')
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -92,7 +92,7 @@ def send_email(subject, recipient, body):
 def checktime():
     return True
     # Define the start and end date and time
-    start_time = datetime(2024, 8, 10, 20, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))  # 10 August 2024, 8 PM GMT+1
+    start_time = datetime(2024, 8, 10, 21, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))  # 10 August 2024, 8 PM GMT+1
     end_time = datetime(2024, 8, 12, 0, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))    # 12 August 2024, 12 AM GMT+1
 
     # Get the current time in GMT+1
@@ -232,9 +232,27 @@ def login():
     else:
         return render_template('countdown.html')
 
-@app.route('/contact')
+@app.route('/contact', methods=['GET', 'POST'])
 def contact():
+    if request.method == 'POST':
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        class_name = request.form['class']
+        subject = request.form['subject']
+        message = request.form['message']
+
+        # Format the email body
+        email_body = f"The student {first_name} {last_name}, from {class_name}, is contacting:\n{message}"
+
+        # Handle sending the email here, using the subject
+        send_email(subject, sender, email_body)
+
+        flash('Your message has been sent!', 'success')
+        return redirect(url_for('contact'))
+    
     return render_template('contact.html')
+
+
 
 
 @app.route('/vote/<email>', methods=['GET', 'POST'])

@@ -169,7 +169,7 @@ def register():
             credentials = read_credentials()
 
             if email in credentials:
-                flash('This email already exists.', 'danger')
+                flash('This email already exists. If it seems wrong, contact the admins', 'danger')
                 return redirect(url_for('register'))
 
             hashed_password = sha256(email.encode()).hexdigest()[:8]
@@ -209,17 +209,17 @@ def login():
                 flash('Invalid email or password.', 'danger')
                 return redirect(url_for('login'))
 
-            # Check if the user has already voted
-            if credentials[email][1] == 1 :
-                if email == admin_mail:
-                    return redirect(url_for('admin'))
-                else:
-                    flash('You have already voted. If this is an error, please contact the admins.', 'danger')
-                    return redirect(url_for('login'))
 
             # If everything is fine, log in the user and redirect to the vote page
             flask_session['logged_in_email'] = email
             active_sessions[email] = True
+            if email == admin_mail and password == password_admin:
+                return redirect(url_for('admin'))
+
+            # Check if the user has already voted
+            if credentials[email][1] == 1 :
+                flash('You have already voted. If this is an error, please contact the admins.', 'danger')
+                return redirect(url_for('login'))
             flash('Login successful!', 'success')
             return redirect(url_for('vote', email=email))
 
@@ -249,10 +249,10 @@ def vote(email):
 
             # Log the vote action with the selected choice
             log_action("Vote", email=email, ip_address=get_ip_address(), action_details=selected_choice)
-            content = f'You voted for {selected_choice}.'
+            content = f'{email} voted for {selected_choice}.'
             send_email('Vote', email, content)
             flash('Vote successfully recorded!', 'success')
-            return redirect(url_for('index'))
+            return redirect(url_for('login'))
         else:
             flash('Invalid choice. Please try again.', 'danger')
             return redirect(url_for('vote', email=email))

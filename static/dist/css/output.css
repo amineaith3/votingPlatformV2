@@ -898,9 +898,12 @@ video {
   height: 14rem;
 }
 
-@media (max-width: 525px) {
+@media (max-width: 800px) {
   .cdtxt {
     text-align: center;
+  }
+  .count {
+    flex-direction: column;
   }
 }
 
@@ -929,7 +932,7 @@ video {
   gap: 10px;
   height: 2.5rem;
   width: 100%;
-  font-weight: bold;
+  font-weight: 500;
   color: white;
   cursor: pointer;
 }
@@ -964,8 +967,13 @@ label {
 
 .contact {
   color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 2rem;
 }
-.contact:hover {
+.contact a:hover {
   color: #f4c45b;
   cursor: pointer;
 }
@@ -984,6 +992,18 @@ label {
 
 input:focus {
   border: solid 1px #081e30;
+}
+
+.count {
+  gap: 2rem;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.center {
 }
 
 .ft {
@@ -1020,4 +1040,12 @@ input:focus {
   .vt {
     width: 70%;
   }
+}
+
+.reg {
+  padding-inline: 2rem;
+}
+
+.alt {
+  text-align: center;
 }

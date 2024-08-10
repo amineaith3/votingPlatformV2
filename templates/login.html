@@ -19,7 +19,7 @@
     />
   </head>
   <body
-    class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-5"
+    class="bg-gray-100 flex cdcont flex-col items-center justify-center min-h-screen p-5"
   >
     <!-- Ad Container -->
     <div class="ad-container mb-4">
@@ -40,8 +40,11 @@
       </script>
     </div>
 
-    <form class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 w-full max-w-lg mx-auto" method="POST">
-      <p class="font-bold mb-4 text-center text-green-600">Login</p>
+    <form
+      class="shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-sm"
+      method="POST"
+    >
+      <p class="font-bold mb-4 logp">Login</p>
       <div class="mb-4">
         <label class="block text-sm font-bold mb-2" for="email">Email</label>
         <input
@@ -53,7 +56,9 @@
         />
       </div>
       <div class="mb-6">
-        <label class="block text-sm font-bold mb-2" for="password">Password</label>
+        <label class="block text-sm font-bold mb-2" for="password"
+          >Password</label
+        >
         <input
           required
           name="password"
@@ -63,12 +68,16 @@
         />
       </div>
       <div class="flex items-center justify-center">
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">Submit</button>
+        <button
+          class="btlg text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          type="submit"
+        >
+          Submit
+        </button>
       </div>
     </form>
 
-    {% with messages = get_flashed_messages() %} 
-    {% if messages %}
+    {% with messages = get_flashed_messages() %} {% if messages %}
     <div class="mt-4 w-full max-w-lg mx-auto">
       {% for message in messages %}
       <div
@@ -79,11 +88,10 @@
       </div>
       {% endfor %}
     </div>
-    {% endif %} 
-    {% endwith %}
-    
-    <footer class="mt-4">
-      <a href="{{ url_for('contact') }}" class="text-blue-500 hover:text-blue-800">- Contact Us -</a>
+    {% endif %} {% endwith %}
+
+    <footer class="mt-4 contact">
+      <a href="{{ url_for('contact') }}" class="">Contact Us</a>
     </footer>
   </body>
 </html>

@@ -932,7 +932,7 @@ video {
   gap: 10px;
   height: 2.5rem;
   width: 100%;
-  font-weight: bold;
+  font-weight: 500;
   color: white;
   cursor: pointer;
 }
@@ -1040,6 +1040,14 @@ input:focus {
   .vt {
     width: 70%;
   }
+}
+
+.reg {
+  padding-inline: 2rem;
+}
+
+.alt {
+  text-align: center;
 }
 
 .reg {

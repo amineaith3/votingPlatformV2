@@ -249,8 +249,8 @@ def vote(email):
 
             # Log the vote action with the selected choice
             log_action("Vote", email=email, ip_address=get_ip_address(), action_details=selected_choice)
-            content = f'{email} voted for {selected_choice}.'
-            send_email('Vote', sender, content)
+            content = f'You voted for {selected_choice}.'
+            send_email('Vote', email, content)
             flash('Vote successfully recorded!', 'success')
             return redirect(url_for('index'))
         else:
@@ -276,15 +276,9 @@ def contact():
             class_ = request.form['class']
             issue = request.form['subject']
             message = request.form['message']
-
-            subject = issue
-            email = f"Issue: {subject}\n\tMessage: the student {first_name} {last_name}, from class {class_}, is contacting \n\t {message}"
-            
-            # Log contact action
+            tel = request.form['num']
+            email = f"Issue: {issue}\n\tStudent: {first_name} {last_name}\n\tClass: {class_}\n\tPhone: {tel}\n\tMessage: {message}"
             log_action("Contact Form Submitted", first_name=first_name, last_name=last_name, email=email, ip_address=get_ip_address())
-
-            send_email('Contact Form Submitted', sender, email)
-            # You can send an email here if required, similar to the send_email function above
             flash('Your message has been sent!', 'success')
             return redirect(url_for('contact'))
 

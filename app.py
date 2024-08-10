@@ -37,9 +37,14 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=15)
 def read_credentials():
     response = requests.get(CREDENTIALS_URL)
     if response.status_code == 200:
-        return {line.strip().split(',')[0]: int(line.strip().split(',')[2]) for line in response.text.splitlines()}
+        credentials = {}
+        for line in response.text.splitlines():
+            email, password, status = line.strip().split(',')
+            credentials[email] = (password, int(status))
+        return credentials
     else:
         return {}
+
 
 def read_results():
     response = requests.get(RESULTS_URL)
@@ -60,7 +65,7 @@ def update_results_file(results):
     blob.upload_from_string(results_text)
 
 def update_credentials_file(credentials):
-    credentials_text = "\n".join([f"{email},{status}" for email, status in credentials.items()])
+    credentials_text = "\n".join([f"{email},{data[0]},{data[1]}" for email, data in credentials.items()])
     bucket = storage.bucket()
     blob = bucket.blob('.credentials.txt')
     blob.upload_from_string(credentials_text)
@@ -162,17 +167,17 @@ def register():
             email = f"{first_name.lower()}.{last_name.lower()}.23@edu.uiz.ac.ma" if is_new_student == "yes" else f"{first_name.lower()}.{last_name.lower()}@edu.uiz.ac.ma"
             credentials = read_credentials()
 
-            if any(credential[0] == email for credential in credentials):
+            if email in credentials:
                 flash('This email already exists.', 'danger')
                 return redirect(url_for('register'))
 
             hashed_password = sha256(email.encode()).hexdigest()[:8]
-            new_credential = [email, hashed_password, '0']
+            new_credential = (hashed_password, 0)
             subject = "Welcome to the Voting Platform"
             body = f"Hello {first_name},\n\nYour account has been created. Here is your login information:\n\nEmail: {email}\nPassword: {hashed_password}\n\nPlease log in to cast your vote."
             send_email(subject, email, body)
 
-            credentials.append(new_credential)
+            credentials[email] = new_credential
             update_credentials_file(credentials)
             flash('Registration successful! Please check your email for login details.', 'success')
             return redirect(url_for('login'))
@@ -199,12 +204,12 @@ def login():
             credentials = read_credentials()
 
             # Check if the email exists in the credentials file
-            if email not in credentials:
+            if email not in credentials or credentials[email][0] != password:
                 flash('Invalid email or password.', 'danger')
                 return redirect(url_for('login'))
 
             # Check if the user has already voted
-            if credentials[email] == 1:
+            if credentials[email][1] == 1:
                 flash('You have already voted. If this is an error, please contact the admins.', 'danger')
                 return redirect(url_for('login'))
 
@@ -235,7 +240,7 @@ def vote(email):
             update_results_file(results)
 
             # Mark the email as having voted in the credentials
-            credentials[email] = 1  # Update voting status to indicate voted
+            credentials[email] = (credentials[email][0], 1)  # Update voting status to indicate voted
             update_credentials_file(credentials)
 
             # Log the vote action with the selected choice

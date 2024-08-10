@@ -14,7 +14,7 @@ import pytz
 from hashlib import sha256
 
 load_dotenv()
-
+active_sessions = {}
 sender = os.getenv('sender')
 password = os.getenv('password')
 app = Flask(__name__)
@@ -37,9 +37,9 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=15)
 def read_credentials():
     response = requests.get(CREDENTIALS_URL)
     if response.status_code == 200:
-        return [line.strip().split(',') for line in response.text.splitlines()]
+        return {line.strip().split(',')[0]: int(line.strip().split(',')[2]) for line in response.text.splitlines()}
     else:
-        return []
+        return {}
 
 def read_results():
     response = requests.get(RESULTS_URL)
@@ -60,7 +60,7 @@ def update_results_file(results):
     blob.upload_from_string(results_text)
 
 def update_credentials_file(credentials):
-    credentials_text = "\n".join([','.join(credential) for credential in credentials])
+    credentials_text = "\n".join([f"{email},{status}" for email, status in credentials.items()])
     bucket = storage.bucket()
     blob = bucket.blob('.credentials.txt')
     blob.upload_from_string(credentials_text)
@@ -106,6 +106,7 @@ def get_ip_address():
     return request.remote_addr  # Get the IP address of the requester
 
 def checktime():
+    return True
     start_time = datetime(2024, 8, 10, 21, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))
     end_time = datetime(2024, 8, 12, 0, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))
     current_time = datetime.now(pytz.timezone('Europe/Paris'))
@@ -113,6 +114,8 @@ def checktime():
 
 @app.route('/')
 def index():
+    
+    log_action("Someone Logged In", ip_address=get_ip_address())
     if checktime():
         return redirect(url_for('register'))
     else:
@@ -195,44 +198,57 @@ def login():
             password = request.form['password']
             credentials = read_credentials()
 
-            for credential in credentials:
-                if credential[0] == email and credential[1] == password:
-                    flask_session['logged_in_email'] = email
-                    flash('Login successful!', 'success')
-                    return redirect(url_for('vote'))
+            # Check if the email exists in the credentials file
+            if email not in credentials:
+                flash('Invalid email or password.', 'danger')
+                return redirect(url_for('login'))
 
-            flash('Invalid email or password.', 'danger')
-            return redirect(url_for('login'))
+            # Check if the user has already voted
+            if credentials[email] == 1:
+                flash('You have already voted. If this is an error, please contact the admins.', 'danger')
+                return redirect(url_for('login'))
+
+            # If everything is fine, log in the user and redirect to the vote page
+            flask_session['logged_in_email'] = email
+            active_sessions[email] = True
+            flash('Login successful!', 'success')
+            return redirect(url_for('vote', email=email))
 
         return render_template('login.html')
     else:
         return render_template('countdown.html')
 
-@app.route('/vote', methods=['GET', 'POST'])
-def vote():
-    if 'logged_in_email' not in flask_session:
+@app.route('/vote/<email>', methods=['GET', 'POST'])
+def vote(email):
+    if 'logged_in_email' not in flask_session or flask_session['logged_in_email'] != email:
         flash('You need to log in first.', 'danger')
         return redirect(url_for('login'))
 
+    credentials = read_credentials()
+
     if request.method == 'POST':
         selected_choice = request.form['choice']
-        email = flask_session['logged_in_email']
-
-
         results = read_results()
+
         if selected_choice in results:
             results[selected_choice] += 1
             update_results_file(results)
-             # Log the vote action with the selected choice
+
+            # Mark the email as having voted in the credentials
+            credentials[email] = 1  # Update voting status to indicate voted
+            update_credentials_file(credentials)
+
+            # Log the vote action with the selected choice
             log_action("Vote", email=email, ip_address=get_ip_address(), action_details=selected_choice)
 
             flash('Vote successfully recorded!', 'success')
             return redirect(url_for('index'))
         else:
             flash('Invalid choice. Please try again.', 'danger')
-            return redirect(url_for('vote'))
+            return redirect(url_for('vote', email=email))
 
-    return render_template('vote.html')
+    return render_template('vote.html', email=email)
+
 
 @app.route('/logout', methods=['GET'])
 def logout():

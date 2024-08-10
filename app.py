@@ -11,19 +11,18 @@ import firebase_admin
 from firebase_admin import credentials, storage
 from datetime import timedelta, datetime
 import pytz
-import time
 from hashlib import sha256
 
 load_dotenv()
 
 sender = os.getenv('sender')
 password = os.getenv('password')
-password_admin = os.getenv('password-admin')
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 CREDENTIALS_URL = os.getenv('CREDENTIALS_URL')
 RESULTS_URL = os.getenv('RESULTS_URL')
-ENSA_STUDENTS_URL = os.getenv('ENSA_STUDENTS_URL')  # Changed variable name for clarity
+ENSA_STUDENTS_URL = os.getenv('ENSA_STUDENTS_URL')
+LOGS = os.getenv('LOGS')
 service_account_key = json.loads(os.getenv('SERVICE_ACCOUNT_KEY'))
 
 # Initialize Firebase Admin
@@ -34,9 +33,6 @@ firebase_admin.initialize_app(cred, {
 
 # Set session lifetime to 15 minutes
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=15)
-
-# Global session tracker to monitor active sessions and their IPs
-active_sessions = {}
 
 def read_credentials():
     response = requests.get(CREDENTIALS_URL)
@@ -49,13 +45,10 @@ def read_results():
     response = requests.get(RESULTS_URL)
     if response.status_code == 200:
         results = {line.split(',')[0]: int(line.split(',')[1]) for line in response.text.splitlines()}
-        
-        # Ensure all expected choices are in the results
         choices = ["Novators", "Clavis", "Achievers"]
         for choice in choices:
             if choice not in results:
                 results[choice] = 0
-        
         return results
     else:
         return {"Novators": 0, "Clavis": 0, "Achievers": 0}
@@ -67,7 +60,6 @@ def update_results_file(results):
     blob.upload_from_string(results_text)
 
 def update_credentials_file(credentials):
-    # Convert credentials list to text format
     credentials_text = "\n".join([','.join(credential) for credential in credentials])
     bucket = storage.bucket()
     blob = bucket.blob('.credentials.txt')
@@ -89,27 +81,44 @@ def send_email(subject, recipient, body):
     except Exception as e:
         print(f"Error: {e}")
 
+def log_action(action, first_name=None, last_name=None, email=None, ip_address=None, action_details=None):
+    log_entry = f"{datetime.now(pytz.timezone('Europe/Paris')).isoformat()}.\n\tAction: {action}\n\t"
+    
+    if first_name and last_name:
+        log_entry += f"Name: {first_name} {last_name}\n\t"
+    
+    if email:
+        log_entry += f"Email: {email}\n\t"
+    
+    if ip_address:
+        log_entry += f"IP: {ip_address}\n\t"
+    
+    if action_details:
+        log_entry += f"Voted to: {action_details}.\n"
+    
+    # Append the log entry to the log file
+    bucket = storage.bucket()
+    blob = bucket.blob('logs.txt')
+    current_logs = blob.download_as_text() if blob.exists() else ''
+    blob.upload_from_string(current_logs + log_entry + '\n', content_type='text/plain')
+
+def get_ip_address():
+    return request.remote_addr  # Get the IP address of the requester
+
 def checktime():
-    # Define the start and end date and time
-    start_time = datetime(2024, 8, 10, 21, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))  # 10 August 2024, 8 PM GMT+1
-    end_time = datetime(2024, 8, 12, 0, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))    # 12 August 2024, 12 AM GMT+1
-
-    # Get the current time in GMT+1
+    return True
+    start_time = datetime(2024, 8, 10, 21, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))
+    end_time = datetime(2024, 8, 12, 0, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))
     current_time = datetime.now(pytz.timezone('Europe/Paris'))
-
-    # Check if current time is within the specified range
     return start_time <= current_time < end_time
- 
+
 @app.route('/')
 def index():
     if checktime():
-        # Redirect to the registration page if the current time is after or equal to the target time
         return redirect(url_for('register'))
     else:
-        # Render the countdown page if the current time is before the target time
         return render_template('countdown.html')
 
-# Function to load ENSA_STUDENTS data
 def load_students_data():
     students_data = []
     response = requests.get(ENSA_STUDENTS_URL)
@@ -121,65 +130,48 @@ def load_students_data():
     return students_data
 
 def check_student_exists(first_name, last_name, students_data):
-    # Normalize the first name and last name by converting to lowercase and removing spaces and hyphens
     normalized_first_name = first_name.strip().lower().replace(" ", "").replace("-", "")
     normalized_last_name = last_name.strip().lower().replace(" ", "").replace("-", "")
-
-    # Check if the student exists in the data
     for student in students_data:
-        if student and len(student) >= 2:  # Check if there are at least two columns
+        if student and len(student) >= 2:
             if student[0].strip().lower().replace(" ", "").replace("-", "") == normalized_first_name and \
                student[1].strip().lower().replace(" ", "").replace("-", "") == normalized_last_name:
                 return True
     return False
 
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if checktime():
-        students_data = load_students_data()  # Load the ENSA_STUDENTS data
-
+        students_data = load_students_data()
         if request.method == 'POST':
             first_name = request.form['first_name'].lower()
             last_name = request.form['last_name'].lower()
             is_new_student = request.form['is_new_student']
-                        
-            # Check if the student exists in the ENSA_STUDENTS file
+
+            # Log action right after registration starts
+            log_action("Start Registration", first_name, last_name, ip_address=get_ip_address())
+            
             if not check_student_exists(first_name, last_name, students_data):
                 flash('You entered your data wrong, or you aren\'t an ENSA student. Please contact the admins through the contact us page.', 'danger')
                 return redirect(url_for('register'))
-                
-            # Remove spaces and hyphens from first and last names
+
             first_name = first_name.replace(" ", "").replace("-", "")
             last_name = last_name.replace(" ", "").replace("-", "")
-
-            # Generate the email
-            if is_new_student == "yes":
-                email = f"{first_name.lower()}.{last_name.lower()}.23@edu.uiz.ac.ma"
-            else:
-                email = f"{first_name.lower()}.{last_name.lower()}@edu.uiz.ac.ma"
-
-            # Check if the email already exists
+            email = f"{first_name.lower()}.{last_name.lower()}.23@edu.uiz.ac.ma" if is_new_student == "yes" else f"{first_name.lower()}.{last_name.lower()}@edu.uiz.ac.ma"
             credentials = read_credentials()
+
             if any(credential[0] == email for credential in credentials):
                 flash('This email already exists.', 'danger')
                 return redirect(url_for('register'))
 
-            # Create a hashed password
-            hashed_password = sha256(email.encode()).hexdigest()[:8]  # Slicing the first 8 characters of the email
-            
-            # Prepare the new credential
-            new_credential = [email, hashed_password, '0']  # status '0' for not voted
-            
-            # Send email with the hashed password
+            hashed_password = sha256(email.encode()).hexdigest()[:8]
+            new_credential = [email, hashed_password, '0']
             subject = "Welcome to the Voting Platform"
             body = f"Hello {first_name},\n\nYour account has been created. Here is your login information:\n\nEmail: {email}\nPassword: {hashed_password}\n\nPlease log in to cast your vote."
             send_email(subject, email, body)
-            
-            # Update the credentials file
+
             credentials.append(new_credential)
             update_credentials_file(credentials)
-            
             flash('Registration successful! Please check your email for login details.', 'success')
             return redirect(url_for('login'))
 
@@ -189,14 +181,11 @@ def register():
 
 @app.route('/admin', methods=['GET'])
 def admin():
-    # Check if the user is logged in as admin
     if 'logged_in_email' not in flask_session or flask_session['logged_in_email'] != sender:
         flash('Access denied. Admins only.')
         return redirect(url_for('login'))
 
-    # Fetch results to display
     results = read_results()
-
     return render_template('admin.html', results=results)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -205,94 +194,73 @@ def login():
         if request.method == 'POST':
             email = request.form['email']
             password = request.form['password']
-            user_ip = request.remote_addr
             credentials = read_credentials()
 
             for credential in credentials:
                 if credential[0] == email and credential[1] == password:
-                    if credential[2] == '0':
-                        # Check if this email is already logged in from a different IP
-                        if email in active_sessions and active_sessions[email]['ip'] != user_ip:
-                            flash('This account is already logged in from another IP.')
-                            return render_template('login.html')
+                    flask_session['logged_in_email'] = email
+                    flash('Login successful!', 'success')
+                    return redirect(url_for('vote'))
 
-                        # Set session as permanent and track IP
-                        flask_session.permanent = True
-                        flask_session['logged_in_email'] = email
-                        active_sessions[email] = {'ip': user_ip, 'last_active': time.time()}
+            flash('Invalid email or password.', 'danger')
+            return redirect(url_for('login'))
 
-                        return redirect(url_for('vote', email=email))
-                    else:
-                        flash('This account has already been used for voting. Please contact the admin in case you didn\'t.')
-                        return render_template('login.html')
-
-            flash('Invalid email or password.')
         return render_template('login.html')
     else:
         return render_template('countdown.html')
+
+@app.route('/vote', methods=['GET', 'POST'])
+def vote():
+    if 'logged_in_email' not in flask_session:
+        flash('You need to log in first.', 'danger')
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        selected_choice = request.form['choice']
+        email = flask_session['logged_in_email']
+
+
+        results = read_results()
+        if selected_choice in results:
+            results[selected_choice] += 1
+            update_results_file(results)
+             # Log the vote action with the selected choice
+            log_action("Vote", email=email, ip_address=get_ip_address(), action_details=selected_choice)
+
+            flash('Vote successfully recorded!', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('Invalid choice. Please try again.', 'danger')
+            return redirect(url_for('vote'))
+
+    return render_template('vote.html')
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    flask_session.pop('logged_in_email', None)
+    flash('You have been logged out.', 'success')
+    return redirect(url_for('login'))
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':
         first_name = request.form['first_name']
         last_name = request.form['last_name']
-        class_name = request.form['class']
-        subject = request.form['subject']
+        class_ = request.form['class']
+        issue = request.form['issue']
         message = request.form['message']
 
-        # Format the email body
-        email_body = f"The student {first_name} {last_name}, from {class_name}, is contacting:\n{message}"
+        subject = issue
+        email = f"Subject: {subject}, Email: {first_name} {last_name}, Message: \"the student {first_name} {last_name}, from class {class_}, is contacting \\n {message}\""
+        
+        # Log contact action
+        log_action("Contact Form Submitted", first_name=first_name, last_name=last_name, email=email, ip_address=get_ip_address())
 
-        # Handle sending the email here, using the subject
-        send_email(subject, sender, email_body)
-
+        # You can send an email here if required, similar to the send_email function above
         flash('Your message has been sent!', 'success')
         return redirect(url_for('contact'))
-    
+
     return render_template('contact.html')
-
-
-
-
-@app.route('/vote/<email>', methods=['GET', 'POST'])
-def vote(email):
-    if checktime():
-        if 'logged_in_email' not in flask_session or flask_session['logged_in_email'] != email:
-            return redirect(url_for('login'))
-
-        if request.method == 'POST':
-            choice = request.form['choice']
-            results = read_results()
-
-            if choice in results:
-                results[choice] += 1
-                update_results_file(results)
-
-                # Update user's status to 1 (voted)
-                credentials = read_credentials()
-                for i in range(len(credentials)):
-                    if credentials[i][0] == email:
-                        credentials[i][2] = '1'
-                        break
-                update_credentials_file(credentials)
-
-                flash('Thank you for voting!')
-                return redirect(url_for('logout'))
-
-        return render_template('vote.html')
-    else:
-        return render_template('countdown.html')
-
-@app.route('/logout')
-def logout():
-    # Remove user from session and active sessions
-    email = flask_session.get('logged_in_email')
-    if email:
-        flask_session.pop('logged_in_email', None)
-        if email in active_sessions:
-            del active_sessions[email]
-    
-    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)

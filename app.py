@@ -17,7 +17,7 @@ load_dotenv()
 active_sessions = {}
 sender = os.getenv('sender')
 password = os.getenv('password')
-admin = os.getenv('admin')
+admin_mail = os.getenv('admin')
 password_admin = os.getenv('password_admin')
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -113,7 +113,6 @@ def get_ip_address():
     return request.remote_addr  # Get the IP address of the requester
 
 def checktime():
-    return True
     start_time = datetime(2024, 8, 10, 21, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))
     end_time = datetime(2024, 8, 12, 0, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))
     current_time = datetime.now(pytz.timezone('Europe/Paris'))
@@ -190,7 +189,7 @@ def register():
 
 @app.route('/admin', methods=['GET'])
 def admin():
-    if 'logged_in_email' not in flask_session or flask_session['logged_in_email'] != admin:
+    if 'logged_in_email' not in flask_session or flask_session['logged_in_email'] != admin_mail:
         flash('Access denied. Admins only.')
         return redirect(url_for('login'))
 
@@ -211,9 +210,12 @@ def login():
                 return redirect(url_for('login'))
 
             # Check if the user has already voted
-            if credentials[email][1] == 1:
-                flash('You have already voted. If this is an error, please contact the admins.', 'danger')
-                return redirect(url_for('login'))
+            if credentials[email][1] == 1 :
+                if email == admin_mail:
+                    return redirect(url_for('admin'))
+                else:
+                    flash('You have already voted. If this is an error, please contact the admins.', 'danger')
+                    return redirect(url_for('login'))
 
             # If everything is fine, log in the user and redirect to the vote page
             flask_session['logged_in_email'] = email
@@ -276,7 +278,7 @@ def contact():
             message = request.form['message']
 
             subject = issue
-            email = f"Subject: {subject}, Email: {first_name} {last_name}\n Message: \"the student {first_name} {last_name}, from class {class_}, is contacting \n {message}\""
+            email = f"Issue: {subject}\n\tMessage: the student {first_name} {last_name}, from class {class_}, is contacting \n\t {message}"
             
             # Log contact action
             log_action("Contact Form Submitted", first_name=first_name, last_name=last_name, email=email, ip_address=get_ip_address())

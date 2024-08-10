@@ -23,7 +23,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 CREDENTIALS_URL = os.getenv('CREDENTIALS_URL')
 RESULTS_URL = os.getenv('RESULTS_URL')
-ENSA_STUDENTS = os.getenv('ENSA_STUDENTS')
+ENSA_STUDENTS_URL = os.getenv('ENSA_STUDENTS')  # Changed variable name for clarity
 service_account_key = json.loads(os.getenv('SERVICE_ACCOUNT_KEY'))
 
 # Initialize Firebase Admin
@@ -89,8 +89,8 @@ def send_email(subject, recipient, body):
     except Exception as e:
         print(f"Error: {e}")
 
-
 def checktime():
+    return True
     # Define the start and end date and time
     start_time = datetime(2024, 8, 10, 20, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))  # 10 August 2024, 8 PM GMT+1
     end_time = datetime(2024, 8, 12, 0, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))    # 12 August 2024, 12 AM GMT+1
@@ -113,19 +113,27 @@ def index():
 # Function to load ENSA_STUDENTS data
 def load_students_data():
     students_data = []
-    with open(ENSA_STUDENTS, mode='r', newline='', encoding='utf-8') as infile:
-        reader = csv.reader(infile)
+    response = requests.get(ENSA_STUDENTS_URL)
+    if response.status_code == 200:
+        lines = response.text.splitlines()
+        reader = csv.reader(lines)
         for row in reader:
             students_data.append(row)
     return students_data
 
 def check_student_exists(first_name, last_name, students_data):
+    # Normalize the first name and last name by converting to lowercase and removing spaces and hyphens
+    normalized_first_name = first_name.strip().lower().replace(" ", "").replace("-", "")
+    normalized_last_name = last_name.strip().lower().replace(" ", "").replace("-", "")
+
     # Check if the student exists in the data
     for student in students_data:
         if student and len(student) >= 2:  # Check if there are at least two columns
-            if student[0].strip().lower() == first_name and student[1].strip().lower() == last_name:
+            if student[0].strip().lower().replace(" ", "").replace("-", "") == normalized_first_name and \
+               student[1].strip().lower().replace(" ", "").replace("-", "") == normalized_last_name:
                 return True
     return False
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -224,47 +232,50 @@ def login():
     else:
         return render_template('countdown.html')
 
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
+
 @app.route('/vote/<email>', methods=['GET', 'POST'])
 def vote(email):
     if checktime():
-        if email == sender:
-            return redirect(url_for('admin'))
-        # Check if the user is logged in
         if 'logged_in_email' not in flask_session or flask_session['logged_in_email'] != email:
-            flash('You need to be logged in to vote.')
             return redirect(url_for('login'))
 
         if request.method == 'POST':
-            selected_choice = request.form['choice']
+            choice = request.form['choice']
             results = read_results()
-            if selected_choice in results:
-                results[selected_choice] += 1
+
+            if choice in results:
+                results[choice] += 1
                 update_results_file(results)
-                # Update the user's status to indicate they've voted
+
+                # Update user's status to 1 (voted)
                 credentials = read_credentials()
-                for credential in credentials:
-                    if credential[0] == email:
-                        credential[2] = '1'  # Status '1' indicates they have voted
+                for i in range(len(credentials)):
+                    if credentials[i][0] == email:
+                        credentials[i][2] = '1'
+                        break
                 update_credentials_file(credentials)
 
-                flash('Your vote has been recorded. Thank you for participating!')
-                return redirect(url_for('index'))
-            else:
-                flash('Invalid choice.')
-        
-        results = read_results()
-        return render_template('vote.html', results=results)
+                flash('Thank you for voting!')
+                return redirect(url_for('logout'))
+
+        return render_template('vote.html')
     else:
         return render_template('countdown.html')
 
 @app.route('/logout')
 def logout():
-    # Clear the session and remove the user from active sessions
-    email = flask_session.pop('logged_in_email', None)
-    if email in active_sessions:
-        del active_sessions[email]
-    flash('You have been logged out.')
-    return redirect(url_for('index'))
+    # Remove user from session and active sessions
+    email = flask_session.get('logged_in_email')
+    if email:
+        flask_session.pop('logged_in_email', None)
+        if email in active_sessions:
+            del active_sessions[email]
+    
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)

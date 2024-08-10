@@ -242,24 +242,27 @@ def logout():
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    if request.method == 'POST':
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
-        class_ = request.form['class']
-        issue = request.form['issue']
-        message = request.form['message']
+    if checktime():
+            
+        if request.method == 'POST':
+            first_name = request.form['first_name']
+            last_name = request.form['last_name']
+            class_ = request.form['class']
+            issue = request.form['issue']
+            message = request.form['message']
 
-        subject = issue
-        email = f"Subject: {subject}, Email: {first_name} {last_name}, Message: \"the student {first_name} {last_name}, from class {class_}, is contacting \\n {message}\""
-        
-        # Log contact action
-        log_action("Contact Form Submitted", first_name=first_name, last_name=last_name, email=email, ip_address=get_ip_address())
+            subject = issue
+            email = f"Subject: {subject}, Email: {first_name} {last_name}, Message: \"the student {first_name} {last_name}, from class {class_}, is contacting \\n {message}\""
+            
+            # Log contact action
+            log_action("Contact Form Submitted", first_name=first_name, last_name=last_name, email=email, ip_address=get_ip_address())
 
-        # You can send an email here if required, similar to the send_email function above
-        flash('Your message has been sent!', 'success')
-        return redirect(url_for('contact'))
+            # You can send an email here if required, similar to the send_email function above
+            flash('Your message has been sent!', 'success')
+            return redirect(url_for('contact'))
 
-    return render_template('contact.html')
-
+        return render_template('contact.html')
+    else:
+        return render_template('countdown.html')
 if __name__ == '__main__':
     app.run(debug=True)

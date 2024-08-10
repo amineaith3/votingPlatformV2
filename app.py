@@ -90,7 +90,6 @@ def send_email(subject, recipient, body):
         print(f"Error: {e}")
 
 def checktime():
-    return True
     # Define the start and end date and time
     start_time = datetime(2024, 8, 10, 21, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))  # 10 August 2024, 8 PM GMT+1
     end_time = datetime(2024, 8, 12, 0, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))    # 12 August 2024, 12 AM GMT+1

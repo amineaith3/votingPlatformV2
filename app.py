@@ -23,7 +23,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 CREDENTIALS_URL = os.getenv('CREDENTIALS_URL')
 RESULTS_URL = os.getenv('RESULTS_URL')
-ENSA_STUDENTS_URL = os.getenv('ENSA_STUDENTS')  # Changed variable name for clarity
+ENSA_STUDENTS_URL = os.getenv('ENSA_STUDENTS_URL')  # Changed variable name for clarity
 service_account_key = json.loads(os.getenv('SERVICE_ACCOUNT_KEY'))
 
 # Initialize Firebase Admin

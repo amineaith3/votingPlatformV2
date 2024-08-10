@@ -15,7 +15,7 @@
     />
   </head>
   <body
-    class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-5"
+    class="cdcont bg-gray-100 flex flex-col reg items-center justify-center min-h-screen p-5"
   >
     <!-- Ad Container -->
     <div class="ad-container mb-4">
@@ -36,16 +36,15 @@
       </script>
     </div>
 
-    <h2 class="text-2xl font-bold mb-4 text-green-600">Contact Us</h2>
+    <h2 class="font-bold mb-4 logp ctt">Contact Us</h2>
     <form
       method="POST"
-      class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4 w-full max-w-lg mx-auto"
+      class="shadow-md rounded-lg px-8 pt-6 pb-8 mb-4 w-full max-w-lg mx-auto"
     >
       <div class="mb-4">
-        <label
-          class="block text-gray-700 text-sm font-bold mb-2"
-          for="first_name"
-        >First Name</label>
+        <label class="block text-sm font-bold mb-2" for="first_name"
+          >First Name</label
+        >
         <input
           required
           name="first_name"
@@ -55,10 +54,9 @@
         />
       </div>
       <div class="mb-4">
-        <label
-          class="block text-gray-700 text-sm font-bold mb-2"
-          for="last_name"
-        >Last Name</label>
+        <label class="block text-sm font-bold mb-2" for="last_name"
+          >Last Name</label
+        >
         <input
           required
           name="last_name"
@@ -68,10 +66,7 @@
         />
       </div>
       <div class="mb-4">
-        <label
-          class="block text-gray-700 text-sm font-bold mb-2"
-          for="class"
-        >Class</label>
+        <label class="block text-sm font-bold mb-2" for="class">Class</label>
         <select
           required
           name="class"
@@ -98,10 +93,7 @@
         </select>
       </div>
       <div class="mb-4">
-        <label
-          class="block text-gray-700 text-sm font-bold mb-2"
-          for="subject"
-        >Issue</label>
+        <label class="block text-sm font-bold mb-2" for="subject">Issue</label>
         <select
           required
           name="subject"
@@ -109,17 +101,20 @@
           id="subject"
         >
           <option value="">Select Issue</option>
-          <option value="I don't have an educational email">I don't have an educational email</option>
-          <option value="I didn't receive an email (even in the spam)">I didn't receive an email (even in the spam)</option>
+          <option value="I don't have an educational email">
+            I don't have an educational email
+          </option>
+          <option value="I didn't receive an email (even in the spam)">
+            I didn't receive an email (even in the spam)
+          </option>
           <option value="Others">Others</option>
         </select>
       </div>
-      
+
       <div class="mb-6">
-        <label
-          class="block text-gray-700 text-sm font-bold mb-2"
-          for="num"
-        >Phone Number</label>
+        <label class="block text-sm font-bold mb-2" for="num"
+          >Phone Number</label
+        >
         <input
           required
           type="text"
@@ -128,23 +123,22 @@
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           id="num"
         />
-      <div class="mb-6">
-        <label
-          class="block text-gray-700 text-sm font-bold mb-2"
-          for="message"
-        >Message</label>
-        <textarea
-          required
-          name="message"
-          rows="4"
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="message"
-        ></textarea>
-      </div>
+        <div class="mb-6">
+          <label class="block text-sm font-bold mb-2" for="message"
+            >Message</label
+          >
+          <textarea
+            required
+            name="message"
+            rows="4"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="message"
+          ></textarea>
+        </div>
       </div>
       <div class="flex items-center justify-center">
         <button
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          class="btlg text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           type="submit"
         >
           Submit
@@ -152,8 +146,7 @@
       </div>
     </form>
 
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
+    {% with messages = get_flashed_messages() %} {% if messages %}
     <div class="mt-4 w-full max-w-lg">
       {% for message in messages %}
       <div
@@ -166,8 +159,8 @@
     </div>
     {% endif %} {% endwith %}
 
-    <footer class="mt-4">
-      <a href="{{ url_for('login') }}" class="text-blue-500 hover:text-blue-800">Return Home</a>
+    <footer class="mt-4 contact">
+      <a href="{{ url_for('login') }}" class="">Return Home</a>
     </footer>
   </body>
 </html>

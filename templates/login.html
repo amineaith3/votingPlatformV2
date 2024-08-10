@@ -17,14 +17,12 @@
       type="image/x-icon"
       href="{{ url_for('static', filename='images/logo.ico') }}"
     />
-    <!-- <link rel="stylesheet" href="/static/dist/css/output.css" />
-    <link rel="icon" type="image/x-icon" href="/static/images/logo.ico" /> -->
   </head>
   <body
-    class="bg-gray-100 flex flex-col items-center justify-center min-h-screen cdcont"
+    class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-5"
   >
-    <!-- Place your ad code here -->
-    <div class="ad-container">
+    <!-- Ad Container -->
+    <div class="ad-container mb-4">
       <script
         async
         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3409852641357503"
@@ -42,8 +40,8 @@
       </script>
     </div>
 
-    <form class="fo rounded w-full" method="POST">
-      <p class="font-bold mb-4 logp">Login</p>
+    <form class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 w-full max-w-lg mx-auto" method="POST">
+      <p class="font-bold mb-4 text-center text-green-600">Login</p>
       <div class="mb-4">
         <label class="block text-sm font-bold mb-2" for="email">Email</label>
         <input
@@ -55,9 +53,7 @@
         />
       </div>
       <div class="mb-6">
-        <label class="block text-sm font-bold mb-2" for="password"
-          >Password</label
-        >
+        <label class="block text-sm font-bold mb-2" for="password">Password</label>
         <input
           required
           name="password"
@@ -67,11 +63,13 @@
         />
       </div>
       <div class="flex items-center justify-center">
-        <button class="btlg" type="submit">Submit</button>
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">Submit</button>
       </div>
     </form>
-    {% with messages = get_flashed_messages() %} {% if messages %}
-    <div class="mt-4 w-full max-w-sm">
+
+    {% with messages = get_flashed_messages() %} 
+    {% if messages %}
+    <div class="mt-4 w-full max-w-lg mx-auto">
       {% for message in messages %}
       <div
         class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-2"
@@ -81,9 +79,11 @@
       </div>
       {% endfor %}
     </div>
-    {% endif %} {% endwith %}
+    {% endif %} 
+    {% endwith %}
+    
     <footer class="mt-4">
-      <a href="{{ url_for('contact') }}" class="contact">- Contact Us -</a>
+      <a href="{{ url_for('contact') }}" class="text-blue-500 hover:text-blue-800">- Contact Us -</a>
     </footer>
   </body>
 </html>

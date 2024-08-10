@@ -1,42 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact Us</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/output.css') }}">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3409852641357503"
-     crossorigin="anonymous"></script>
-     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.ico') }}">
-</head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
-  <h2 class="text-2xl font-bold mb-4">Contact Us</h2>
-  <form method="POST" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-lg">
-    <div class="mb-4">
-      <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email</label>
-      <input required name="email" type="email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Us</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dist/css/output.css') }}"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='images/logo.ico') }}"
+    />
+  </head>
+  <body
+    class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-5"
+  >
+    <!-- Ad Container -->
+    <div class="ad-container mb-4">
+      <script
+        async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3409852641357503"
+        crossorigin="anonymous"
+      ></script>
+      <ins
+        class="adsbygoogle"
+        style="display: block"
+        data-ad-client="ca-pub-3409852641357503"
+        data-ad-slot="1667424826"
+        data-ad-format="auto"
+      ></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
     </div>
-    <div class="mb-6">
-      <label class="block text-gray-700 text-sm font-bold mb-2" for="message">Message</label>
-      <textarea required name="message" rows="4" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="message"></textarea>
-    </div>
-    <div class="flex items-center justify-between">
-      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-        Submit
-      </button>
-    </div>
-  </form>
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <div class="mt-4 w-full max-w-lg">
-        {% for message in messages %}
-          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-2" role="alert">{{ message }}</div>
-        {% endfor %}
+
+    <h2 class="text-2xl font-bold mb-4 text-green-600">Contact Us</h2>
+    <form
+      method="POST"
+      class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4 w-full max-w-lg mx-auto"
+    >
+      <div class="mb-4">
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="first_name"
+        >First Name</label>
+        <input
+          required
+          name="first_name"
+          type="text"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="first_name"
+        />
       </div>
-    {% endif %}
-  {% endwith %}
-  <footer class="mt-4">
-    <a href="{{ url_for('login') }}" class="text-blue-500 hover:text-blue-800">Return Home</a>
-  </footer>
-</body>
+      <div class="mb-4">
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="last_name"
+        >Last Name</label>
+        <input
+          required
+          name="last_name"
+          type="text"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="last_name"
+        />
+      </div>
+      <div class="mb-4">
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="class"
+        >Class</label>
+        <select
+          required
+          name="class"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="class"
+        >
+          <option value="">Select Class</option>
+          <option value="Class 1">Info 1</option>
+          <option value="Class 2">Info 2</option>
+          <option value="Class 3">BTP 1</option>
+          <option value="Class 2">BTP 2</option>
+          <option value="Class 3">Meca 1</option>
+          <option value="Class 2">Meca 2</option>
+          <option value="Class 3">Indus 1</option>
+          <option value="Class 2">Indus 2</option>
+          <option value="Class 3">Elec 1</option>
+          <option value="Class 2">Elec 2</option>
+          <option value="Class 3">Gee 1</option>
+          <option value="Class 2">Gee 2</option>
+          <option value="Class 3">Fid 1</option>
+          <option value="Class 3">Fid 2</option>
+          <option value="Class 2">AP 1</option>
+          <option value="Class 3">AP 2</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="subject"
+        >Issue</label>
+        <select
+          required
+          name="subject"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="subject"
+        >
+          <option value="">Select Issue</option>
+          <option value="I don't have an educational email">I don't have an educational email</option>
+          <option value="I didn't receive an email (even in the spam)">I didn't receive an email (even in the spam)</option>
+          <option value="Others">Others</option>
+        </select>
+      </div>
+      
+      <div class="mb-6">
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="num"
+        >Phone Number</label>
+        <input
+          required
+          type="text"
+          name="num"
+          rows="4"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="num"
+        />
+      <div class="mb-6">
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="message"
+        >Message</label>
+        <textarea
+          required
+          name="message"
+          rows="4"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="message"
+        ></textarea>
+      </div>
+      </div>
+      <div class="flex items-center justify-center">
+        <button
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          type="submit"
+        >
+          Submit
+        </button>
+      </div>
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="mt-4 w-full max-w-lg">
+      {% for message in messages %}
+      <div
+        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-2"
+        role="alert"
+      >
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
+
+    <footer class="mt-4">
+      <a href="{{ url_for('login') }}" class="text-blue-500 hover:text-blue-800">Return Home</a>
+    </footer>
+  </body>
 </html>

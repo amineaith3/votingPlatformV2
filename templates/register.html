@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register</title>
@@ -9,22 +9,25 @@
       href="{{ url_for('static', filename='dist/css/output.css') }}"
     />
     <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css"
-    />
-    <link
       rel="icon"
       type="image/x-icon"
       href="{{ url_for('static', filename='images/logo.ico') }}"
     />
   </head>
-  <body class="cdcont flex flex-col items-center justify-center min-h-screen">
-    <form class="fo rounded" method="POST">
-      <p class="font-bold mb-4 logp">Register</p>
+  <body
+    class= flex flex-col items-center justify-center min-h-screen"
+  >
+    <form
+      class=" shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-sm"
+      method="POST"
+    >
+      <p class="text-2xl font-bold mb-4">Register</p>
 
       <!-- First Name -->
       <div class="mb-4">
-        <label class="block text-sm font-bold mb-2" for="first_name"
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="first_name"
           >First Name</label
         >
         <input
@@ -38,7 +41,9 @@
 
       <!-- Last Name -->
       <div class="mb-4">
-        <label class="block text-sm font-bold mb-2" for="last_name"
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="last_name"
           >Last Name</label
         >
         <input
@@ -52,7 +57,9 @@
 
       <!-- Are you a new ENA student? -->
       <div class="mb-6">
-        <label class="block text-sm font-bold mb-2" for="is_new_student"
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="is_new_student"
           >Are you a new ENSA student, joined in 2023/2024?</label
         >
         <select
@@ -69,30 +76,36 @@
 
       <!-- Submit Button -->
       <div class="flex items-center justify-center">
-        <button class="btlg py-2 px-4 rounded" type="submit">Register</button>
+        <button
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          type="submit"
+        >
+          Register
+        </button>
       </div>
     </form>
 
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages() %} {% if messages %}
-    <div class="mt-4 w-full max-w-sm">
-      {% for message in messages %}
-      <div
-        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-2"
-        role="alert"
-      >
-        {{ message }}
-      </div>
-      {% endfor %}
+    <div class="mt-4 w-full max-w-md">
+        {% for message in messages %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-2" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
     </div>
     {% endif %} {% endwith %}
 
     <!-- Already Registered? -->
-    <footer class="mt-4 ft">
-      <a href="{{ url_for('login') }}" class="contact"
+    <footer class="mt-4">
+      <a href="{{ url_for('login') }}" class="text-blue-500 hover:text-blue-800"
         >Already Registered? Log In</a
       >
-      <a href="{{ url_for('contact') }}" class="contact">Contact Us</a>
+      <a
+        href="{{ url_for('contact') }}"
+        class="text-blue-500 hover:text-blue-800"
+        >Contact Us</a
+      >
     </footer>
-  </body>
+</body>
 </html>

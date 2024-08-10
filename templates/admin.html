@@ -1,34 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Results</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/output.css') }}">
-  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.ico') }}">
-</head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
-  <h1 class="text-2xl font-bold mb-4">Voting Results</h1>
-  <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-lg">
-    <table class="w-full border border-gray-300">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Results</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dist/css/output.css') }}"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='images/logo.ico') }}"
+    />
+  </head>
+  <body
+    class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-5"
+  >
+    <!-- Ad Container -->
+    <div class="ad-container mb-4">
+      <script
+        async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3409852641357503"
+        crossorigin="anonymous"
+      ></script>
+      <ins
+        class="adsbygoogle"
+        style="display: block"
+        data-ad-client="ca-pub-3409852641357503"
+        data-ad-slot="1667424826"
+        data-ad-format="auto"
+      ></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+
+    <h1 class="text-2xl font-bold mb-4 text-green-600">Voting Results</h1>
+    <div class="bg-white shadow-md rounded-lg overflow-hidden w-full max-w-lg mx-auto">
+      <table class="w-full table-auto border-collapse">
         <thead>
-            <tr>
-                <th class="border border-gray-300 p-2">Choice</th>
-                <th class="border border-gray-300 p-2">Votes</th>
-            </tr>
+          <tr class="bg-blue-500 text-white">
+            <th class="p-4 text-center font-semibold">Choice</th>
+            <th class="p-4 text-center font-semibold">Votes</th>
+          </tr>
         </thead>
         <tbody>
-            {% for choice, votes in results.items() %}
-            <tr>
-                <td class="border border-gray-300 p-2">{{ choice }}</td>
-                <td class="border border-gray-300 p-2">{{ votes }}</td>
-            </tr>
-            {% endfor %}
+          {% for choice, votes in results.items() %}
+          <tr class="hover:bg-gray-100">
+            <td class="p-4 text-center border-b border-gray-300">{{ choice }}</td>
+            <td class="p-4 text-center border-b border-gray-300">{{ votes }}</td>
+          </tr>
+          {% endfor %}
         </tbody>
-    </table>
-  </div>
-  <footer class="mt-4">
-    <a href="{{ url_for('login') }}" class="text-blue-500 hover:text-blue-800">Return Home</a>
-  </footer>
-</body>
+      </table>
+    </div>
+
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <div class="mt-4 w-full max-w-lg mx-auto">
+      {% for message in messages %}
+      <div
+        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-2"
+        role="alert"
+      >
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
+
+    <footer class="mt-4">
+      <a href="{{ url_for('login') }}" class="text-blue-500 hover:text-blue-800">Return Home</a>
+    </footer>
+  </body>
 </html>

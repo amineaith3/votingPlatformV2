@@ -54,7 +54,7 @@
       // Set the important dates and times
       const voteStartDate = new Date("August 10, 2024 21:00:00 GMT+0100").getTime();
       const voteEndDate = new Date("August 12, 2024 09:00:00 GMT+0100").getTime();
-      const now = new Date('August 12, 2024 06:00:00 GMT+0100').getTime();
+      const now = new Date().getTime();
 
       // Get the message element and countdown element
       const messageElement = document.getElementById("message");
@@ -64,7 +64,7 @@
       // Function to update the countdown
       const updateCountdown = (endDate, redirectUrl) => {
         const x = setInterval(function () {
-          const now = new Date('August 12, 2024 06:00:00 GMT+0100').getTime(); // Update the current time
+          const now = new Date().getTime(); // Update the current time
           const distance = endDate - now;
 
           // Time calculations for days, hours, minutes, and seconds

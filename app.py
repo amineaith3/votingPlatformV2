@@ -246,15 +246,6 @@ def login():
     else:
         return render_template('countdown.html')
 
-@app.route('/results', methods=['GET'])
-def results():
-    if 'logged_in_email' not in flask_session:
-        flash('You need to log in first.', 'danger')
-        return redirect(url_for('login'))
-
-    results = read_results()  # Read the results
-    return render_template('results.html', results=results)
-
 @app.route('/vote/<email>', methods=['GET', 'POST'])
 @login_required
 def vote(email):

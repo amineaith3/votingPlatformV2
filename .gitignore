@@ -3,9 +3,11 @@ serviceAccountKey.json
 manage.py
 manageResults.py
 manageData.py
-info1.xlsx
-info1.csv
 credentials.txt
 data
 newM.py
 zakaria_gal.py
+linesCredentials.py
+logs.txt
+processed_votes.csv
+filterofLogs.py

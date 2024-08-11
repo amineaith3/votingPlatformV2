@@ -9,18 +9,19 @@
       href="{{ url_for('static', filename='dist/css/output.css') }}"
     />
     <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css"
-    />
-    <link
       rel="icon"
       type="image/x-icon"
       href="{{ url_for('static', filename='images/logo.ico') }}"
     />
   </head>
   <body
-    class="bg-gray-100 flex cdcont flex-col items-center justify-center min-h-screen p-5"
+    class="cdcont bg-gray-100 flex flex-col items-center justify-center min-h-screen p-5"
   >
+    <!-- Countdown Timer -->
+    <header class="mb-6">
+      <div id="countdownHeader" class="text-lg font-bold"></div>
+    </header>
+
     <!-- Ad Container -->
     <div class="ad-container mb-4">
       <script
@@ -45,6 +46,8 @@
       method="POST"
     >
       <p class="font-bold mb-4 logp">Login</p>
+
+      <!-- Email -->
       <div class="mb-4">
         <label class="block text-sm font-bold mb-2" for="email">Email</label>
         <input
@@ -55,6 +58,8 @@
           id="email"
         />
       </div>
+
+      <!-- Password -->
       <div class="mb-6">
         <label class="block text-sm font-bold mb-2" for="password"
           >Password</label
@@ -67,6 +72,8 @@
           id="password"
         />
       </div>
+
+      <!-- Submit Button -->
       <div class="flex items-center justify-center">
         <button
           class="btlg text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -77,6 +84,7 @@
       </div>
     </form>
 
+    <!-- Flash Messages -->
     {% with messages = get_flashed_messages() %} {% if messages %}
     <div class="mt-4 w-full max-w-lg mx-auto">
       {% for message in messages %}
@@ -90,8 +98,45 @@
     </div>
     {% endif %} {% endwith %}
 
+    <!-- Contact Us -->
     <footer class="mt-4 contact">
       <a href="{{ url_for('contact') }}" class="">Contact Us</a>
     </footer>
+
+    <!-- Countdown Script -->
+    <script>
+      // Set the date we're counting down to
+      const countDownDateHeader = new Date(
+        "August 12, 2024 09:00:00 GMT+0100"
+      ).getTime();
+
+      // Update the countdown every 1 second
+      const y = setInterval(function () {
+        const now = new Date().getTime();
+        const distance = countDownDateHeader - now;
+
+        // Time calculations for days, hours, minutes, and seconds
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor(
+          (distance % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Display the result in the countdown element
+        document.getElementById(
+          "countdownHeader"
+        ).innerHTML = `Countdown: ${days}d ${hours}h ${minutes}m ${seconds}s `;
+
+        // If the countdown is over
+        if (distance < 0) {
+          clearInterval(y);
+          document.getElementById("countdownHeader").innerHTML =
+            "The vote has finished!";
+        }
+      }, 1000);
+    </script>
   </body>
 </html>

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session as flask_session
 import os
+from functools import wraps
 import json
 import smtplib
 import csv
@@ -113,13 +114,28 @@ def get_ip_address():
     return request.remote_addr  # Get the IP address of the requester
 
 def checktime():
-    return True
-    start_time = datetime(2024, 8, 10, 21, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))
+    start_time = datetime(2024, 8, 11, 10, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))
     end_time = datetime(2024, 8, 12, 9, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))
     current_time = datetime.now(pytz.timezone('Europe/Paris'))
     return start_time <= current_time < end_time
 
+# Add this decorator to routes that need login protection
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'logged_in_email' not in flask_session:
+            flash('You need to log in first.', 'danger')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
+@app.after_request
+def add_header(response):
+    # Prevent caching of pages by the browser
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 @app.route('/')
 def index():
@@ -221,7 +237,7 @@ def login():
 
             # Check if the user has already voted
             if credentials[email][1] == 1 :
-                flash('You have already voted. If this is an error, please contact the admins.', 'danger')
+                flash('You have already voted.\n If this is an error, please contact the admins.', 'danger')
                 return redirect(url_for('login'))
             flash('Login successful!', 'success')
             return redirect(url_for('vote', email=email))
@@ -230,12 +246,18 @@ def login():
     else:
         return render_template('countdown.html')
 
-@app.route('/vote/<email>', methods=['GET', 'POST'])
-def vote(email):
-    if 'logged_in_email' not in flask_session or flask_session['logged_in_email'] != email:
+@app.route('/results', methods=['GET'])
+def results():
+    if 'logged_in_email' not in flask_session:
         flash('You need to log in first.', 'danger')
         return redirect(url_for('login'))
 
+    results = read_results()  # Read the results
+    return render_template('results.html', results=results)
+
+@app.route('/vote/<email>', methods=['GET', 'POST'])
+@login_required
+def vote(email):
     credentials = read_credentials()
 
     if request.method == 'POST':
@@ -255,12 +277,20 @@ def vote(email):
             content = f'{email} voted for {selected_choice}.'
             send_email('Vote', email, content)
             flash('Vote successfully recorded!', 'success')
-            return redirect(url_for('login'))
+            return redirect(url_for('logout'))
         else:
             flash('Invalid choice. Please try again.', 'danger')
             return redirect(url_for('vote', email=email))
 
     return render_template('vote.html', email=email)
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('error.html', error_code=404, error_message="Sorry, the page you are looking for does not exist."), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('error.html', error_code=500, error_message="An internal server error occurred. Please try again later."), 500
 
 
 @app.route('/logout', methods=['GET'])

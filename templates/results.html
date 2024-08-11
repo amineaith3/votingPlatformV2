@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/output.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.ico') }}">
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-5">
+    <div class="max-w-md mx-auto">
+        <h1 class="text-4xl font-bold text-center mb-4">Voting Results</h1>
+        <table class="min-w-full border border-gray-300">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="border border-gray-300 px-4 py-2">Choice</th>
+                    <th class="border border-gray-300 px-4 py-2">Votes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for choice, count in results.items() %}
+                <tr class="hover:bg-gray-100">
+                    <td class="border border-gray-300 px-4 py-2">{{ choice }}</td>
+                    <td class="border border-gray-300 px-4 py-2">{{ count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{{ url_for('logout') }}" class="text-blue-500 hover:text-blue-800 mt-4 inline-block">Log Out</a>
+    </div>
+</body>
+</html>

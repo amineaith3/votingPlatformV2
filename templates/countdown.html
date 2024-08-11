@@ -33,62 +33,71 @@
           fill="#F4C45B"
         />
       </svg>
-
-      <div class="cdtxt">
-        <h1 class="text-2xl font-bold mb-4">Countdown to The Vote</h1>
+      <div class="cdtxt justify-center items-center center text-center">
+        <h1 class="text-2xl font-bold mb-4">Countdown</h1>
         <p class="text-lg mb-4" id="message">
           <!-- Message will be displayed here -->
         </p>
         <div id="countdown" class="text-4xl font-bold hidden">
           <!-- Countdown timer will be displayed here -->
         </div>
+        <img 
+          id="endImage" 
+          src="{{ url_for('static', filename='images/endVote.jpg') }}" 
+          alt="Vote Ended" 
+          class="hidden mx-auto my-4 w-full max-w-sm" 
+        />
       </div>
-    </div>
+      
 
     <script>
-      // Set the date we're counting down to
-      const countDownDate = new Date(
-        "August 10, 2024 21:00:00 GMT+0100"
-      ).getTime();
-      const endDate = new Date("August 12, 2024 09:00:00 GMT+0100").getTime();
-      const now = new Date().getTime();
+      // Set the important dates and times
+      const voteStartDate = new Date("August 10, 2024 21:00:00 GMT+0100").getTime();
+      const voteEndDate = new Date("August 12, 2024 09:00:00 GMT+0100").getTime();
+      const now = new Date('August 12, 2024 06:00:00 GMT+0100').getTime();
 
       // Get the message element and countdown element
       const messageElement = document.getElementById("message");
       const countdownElement = document.getElementById("countdown");
+      const endImage = document.getElementById("endImage");
 
-      // Check the current time and display the appropriate message
-      if (now < countDownDate) {
-        messageElement.innerHTML = "Vote didn't start yet.";
-
-        // Update the countdown every 1 second
+      // Function to update the countdown
+      const updateCountdown = (endDate, redirectUrl) => {
         const x = setInterval(function () {
-          const now = new Date().getTime(); // Update the current time
-          const distance = countDownDate - now;
+          const now = new Date('August 12, 2024 06:00:00 GMT+0100').getTime(); // Update the current time
+          const distance = endDate - now;
 
           // Time calculations for days, hours, minutes, and seconds
           const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-          const hours = Math.floor(
-            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-          );
-          const minutes = Math.floor(
-            (distance % (1000 * 60 * 60)) / (1000 * 60)
-          );
+          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
           const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-          // Display the result in the countdown element
-          countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s `;
-
-          // If the countdown is over, redirect to the register page
+          // If the countdown is over, redirect to the specified URL
           if (distance < 0) {
             clearInterval(x);
-            window.location.href = "{{ url_for('register') }}"; // Redirect to register page
+            window.location.href = redirectUrl;
+          } else {
+            // Display the result in the countdown element
+            countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s `;
           }
         }, 1000);
-      } else if (now >= endDate) {
-        messageElement.innerHTML = "chin tapak dam dam.";
-      } else {
-        countdownElement.classList.remove("hidden"); // Show countdown if it's within the valid range
+      };
+
+      // Check the current time and display the appropriate message
+      if (now < voteStartDate) {
+        messageElement.innerHTML = "Vote didn't start yet.";
+        countdownElement.classList.remove("hidden");
+        updateCountdown(voteStartDate, "{{ url_for('register') }}");
+      } else if (now >= voteStartDate && now < voteEndDate) {
+        countdownElement.classList.remove("hidden");
+        messageElement.innerHTML = "Vote in progress!";
+        updateCountdown(voteEndDate, "{{ url_for('register') }}");
+      }else {
+        messageElement.innerHTML = "Vote finished. Cleaning data and processing.";
+        countdownElement.classList.add("hidden"); // Hide the countdown
+        const endImage = document.getElementById("endImage");
+        endImage.classList.remove("hidden"); // Show the image
       }
     </script>
   </body>

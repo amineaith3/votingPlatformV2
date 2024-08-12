@@ -114,6 +114,7 @@ def get_ip_address():
     return request.remote_addr  # Get the IP address of the requester
 
 def checktime():
+    return False
     start_time = datetime(2024, 8, 11, 10, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))
     end_time = datetime(2024, 8, 12, 9, 0, 0, tzinfo=pytz.timezone('Europe/Paris'))
     current_time = datetime.now(pytz.timezone('Europe/Paris'))

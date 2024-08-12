@@ -1,106 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='dist/css/output.css') }}"
-    />
-    <link
-      rel="icon"
-      type="image/x-icon"
-      href="{{ url_for('static', filename='images/logo.ico') }}"
-    />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/output.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.ico') }}">
     <title>Countdown</title>
-  </head>
-  <body class="cdcont center">
+</head>
+<body class="cdcont bg-gray-100 flex flex-col reg items-center justify-center min-h-screen p-5">
     <div class="count">
       <svg
-        width="318"
-        height="314"
-        viewBox="0 0 318 314"
-        class="mb-4 lgsv"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M54.3862 43.1617C116.972 -16.532 215.704 -14.0097 275.111 48.8788C304.73 80.3231 318.954 120.848 317.95 161.036C316.946 201.224 300.714 240.907 269.421 270.838C206.835 330.532 108.103 328.01 48.6966 265.121C44.6804 260.917 40.9989 256.546 37.652 252.174C42.1703 256.714 46.8558 260.917 51.8761 264.785C52.2108 265.121 52.7128 265.458 53.0475 265.794C53.3822 265.962 53.7169 266.298 54.0516 266.466C59.7412 270.838 65.9329 274.538 72.1245 277.733C72.1245 277.733 72.1245 277.733 72.2919 277.733C122.16 303.46 184.579 296.397 227.251 255.705C281.302 204.082 283.311 117.989 231.602 63.3398C215.202 46.0202 195.288 33.9133 174.036 27.1872C174.036 27.1872 173.869 27.1872 173.701 27.1872C129.188 12.2218 78.1489 21.8065 41.8356 56.6138C45.6844 52.0737 49.868 47.5336 54.2189 43.3298"
-          fill="#4FDEDC"
-        />
-        <path
-          d="M62.586 68.5525C64.0921 90.5803 65.0962 112.776 65.5982 135.645C71.4552 130.768 76.6428 126.396 81.9977 121.856C78.9856 127.91 74.1326 132.45 69.7817 138.167C88.1894 138.672 106.095 140.017 123.666 142.875C105.76 145.566 88.022 146.911 69.2797 147.415C73.9653 153.637 78.8182 158.85 81.9977 165.239C76.9775 160.699 71.9572 156.159 66.4349 151.115C65.0962 183.232 63.9248 214.844 62.586 246.456C61.582 246.961 61.4146 246.12 61.0799 245.616C59.9085 214.171 58.5698 182.727 57.3984 150.778C51.5414 155.319 46.6885 160.531 40.3295 163.894C44.6804 158.513 49.1986 153.301 54.0516 147.415C35.4766 147.079 17.7383 145.566 0 143.043C17.7383 140.017 35.6439 138.84 54.3862 138.335C49.7007 132.45 45.3498 126.733 40.9989 121.184C47.1905 124.883 52.2108 129.928 58.0678 135.477C58.7371 112.44 59.7412 90.4121 61.2473 68.3843C61.7493 67.8799 62.2513 67.8799 62.586 68.3843"
-          fill="#F4C45B"
-        />
-      </svg>
-      <div class="cdtxt justify-center items-center center text-center">
-        <h1 class="text-2xl font-bold mb-4">Countdown</h1>
-        <p class="text-lg mb-4" id="message">
-          <!-- Message will be displayed here -->
-        </p>
-        <div id="countdown" class="text-4xl font-bold hidden">
-          <!-- Countdown timer will be displayed here -->
-        </div>
+      width="318"
+      height="314"
+      viewBox="0 0 318 314"
+      class="mb-4 lgsv"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M54.3862 43.1617C116.972 -16.532 215.704 -14.0097 275.111 48.8788C304.73 80.3231 318.954 120.848 317.95 161.036C316.946 201.224 300.714 240.907 269.421 270.838C206.835 330.532 108.103 328.01 48.6966 265.121C44.6804 260.917 40.9989 256.546 37.652 252.174C42.1703 256.714 46.8558 260.917 51.8761 264.785C52.2108 265.121 52.7128 265.458 53.0475 265.794C53.3822 265.962 53.7169 266.298 54.0516 266.466C59.7412 270.838 65.9329 274.538 72.1245 277.733C72.1245 277.733 72.1245 277.733 72.2919 277.733C122.16 303.46 184.579 296.397 227.251 255.705C281.302 204.082 283.311 117.989 231.602 63.3398C215.202 46.0202 195.288 33.9133 174.036 27.1872C174.036 27.1872 173.869 27.1872 173.701 27.1872C129.188 12.2218 78.1489 21.8065 41.8356 56.6138C45.6844 52.0737 49.868 47.5336 54.2189 43.3298"
+        fill="#4FDEDC"
+      />
+      <path
+        d="M62.586 68.5525C64.0921 90.5803 65.0962 112.776 65.5982 135.645C71.4552 130.768 76.6428 126.396 81.9977 121.856C78.9856 127.91 74.1326 132.45 69.7817 138.167C88.1894 138.672 106.095 140.017 123.666 142.875C105.76 145.566 88.022 146.911 69.2797 147.415C73.9653 153.637 78.8182 158.85 81.9977 165.239C76.9775 160.699 71.9572 156.159 66.4349 151.115C65.0962 183.232 63.9248 214.844 62.586 246.456C61.582 246.961 61.4146 246.12 61.0799 245.616C59.9085 214.171 58.5698 182.727 57.3984 150.778C51.5414 155.319 46.6885 160.531 40.3295 163.894C44.6804 158.513 49.1986 153.301 54.0516 147.415C35.4766 147.079 17.7383 145.566 0 143.043C17.7383 140.017 35.6439 138.84 54.3862 138.335C49.7007 132.45 45.3498 126.733 40.9989 121.184C47.1905 124.883 52.2108 129.928 58.0678 135.477C58.7371 112.44 59.7412 90.4121 61.2473 68.3843C61.7493 67.8799 62.2513 67.8799 62.586 68.3843"
+        fill="#F4C45B"
+      />
+    </svg>
+    <div class="cdtxt justify-center items-center center text-center">
         <img 
-          id="endImage" 
-          src="{{ url_for('static', filename='images/endVote.jpg') }}" 
-          alt="Vote Ended" 
-          class="hidden mx-auto my-4 w-full max-w-sm" 
+            id="endImage" 
+            src="{{ url_for('static', filename='images/endVote.jpg') }}" 
+            alt="Vote Ended" 
+            class="hidden mx-auto my-2 w-full max-w-sm"
         />
-      </div>
-      
-
-    <script>
-      // Set the important dates and times
-      const voteStartDate = new Date("August 10, 2024 21:00:00 GMT+0100").getTime();
-      const voteEndDate = new Date("August 12, 2024 09:00:00 GMT+0100").getTime();
-      const now = new Date().getTime();
-
-      // Get the message element and countdown element
-      const messageElement = document.getElementById("message");
-      const countdownElement = document.getElementById("countdown");
-      const endImage = document.getElementById("endImage");
-
-      // Function to update the countdown
-      const updateCountdown = (endDate, redirectUrl) => {
-        const x = setInterval(function () {
-          const now = new Date().getTime(); // Update the current time
-          const distance = endDate - now;
-
-          // Time calculations for days, hours, minutes, and seconds
-          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-          // If the countdown is over, redirect to the specified URL
-          if (distance < 0) {
-            clearInterval(x);
-            window.location.href = redirectUrl;
-          } else {
-            // Display the result in the countdown element
-            countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s `;
-          }
-        }, 1000);
-      };
-
-      // Check the current time and display the appropriate message
-      if (now < voteStartDate) {
-        messageElement.innerHTML = "Vote didn't start yet.";
-        countdownElement.classList.remove("hidden");
-        updateCountdown(voteStartDate, "{{ url_for('register') }}");
-      } else if (now >= voteStartDate && now < voteEndDate) {
-        countdownElement.classList.remove("hidden");
-        messageElement.innerHTML = "Vote in progress!";
-        updateCountdown(voteEndDate, "{{ url_for('register') }}");
-      }else {
-        messageElement.innerHTML = "Vote finished. Cleaning data and processing.";
-        countdownElement.classList.add("hidden"); // Hide the countdown
-        const endImage = document.getElementById("endImage");
-        endImage.classList.remove("hidden"); // Show the image
-      }
-    </script>
-  </body>
-  <footer class="mt-4 contact">
-  </footer>
+    </div>
+</div>
+<a href="{{ url_for('results') }}" class="bg-blue-500 hover:bg-blue-700 text-white mb-4 font-bold py-2 px-4 rounded">Check Results</a>
+<footer class="mt-4 contact">
+  <a href="{{ url_for('contact') }}" class="">Contact Us</a>
+</footer>
+</body>
 </html>

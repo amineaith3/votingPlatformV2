@@ -1,32 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Results</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/output.css') }}">
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.ico') }}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Final Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/output.css') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.ico') }}" />
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-5">
-    <div class="max-w-md mx-auto">
-        <h1 class="text-4xl font-bold text-center mb-4">Voting Results</h1>
-        <table class="min-w-full border border-gray-300">
-            <thead>
-                <tr class="bg-gray-200">
-                    <th class="border border-gray-300 px-4 py-2">Choice</th>
-                    <th class="border border-gray-300 px-4 py-2">Votes</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for choice, count in results.items() %}
-                <tr class="hover:bg-gray-100">
-                    <td class="border border-gray-300 px-4 py-2">{{ choice }}</td>
-                    <td class="border border-gray-300 px-4 py-2">{{ count }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <a href="{{ url_for('logout') }}" class="text-blue-500 hover:text-blue-800 mt-4 inline-block">Log Out</a>
+<body class="cdcont bg-gray-100 flex flex-col reg items-center justify-center min-h-screen p-5">
+    <!-- Ad Container -->
+    <div class="ad-container mb-4">
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3409852641357503" crossorigin="anonymous"></script>
+      <ins class="adsbygoogle" style="display: block" data-ad-client="ca-pub-3409852641357503" data-ad-slot="1667424826" data-ad-format="auto"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
     </div>
-</body>
+
+    <h1 class="text-2xl font-bold mb-4 text-green-600">Voting Results</h1>
+    <div class="shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-sm">
+      <table class="w-full table-auto border-collapse">
+        <thead>
+          <tr class="bg-blue-500 text-white">
+            <th class="p-4 text-center font-semibold">Choice</th>
+            <th class="p-4 text-center font-semibold">Votes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="hover:bg-gray-100">
+            <td class="p-4 text-center border-b border-gray-300">Novators</td>
+            <td class="p-4 text-center border-b border-gray-300">30</td>
+          </tr>
+          <tr class="hover:bg-gray-100">
+            <td class="p-4 text-center border-b border-gray-300">Clavis</td>
+            <td class="p-4 text-center border-b border-gray-300">155</td>
+          </tr>
+          <tr class="hover:bg-gray-100">
+            <td class="p-4 text-center border-b border-gray-300">Achievers</td>
+            <td class="p-4 text-center border-b border-gray-300">50</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- See Details Button and Images -->
+    <div class="text-center">
+      <button id="toggleDetails" class="text-blue-500 hover:text-blue-800 mb-4">Show Details</button>
+      <img id="detailsImage1" src="{{ url_for('static', filename='images/moreDetails.png') }}" alt="Details" class="hidden mb-10 mx-auto my-4 w-full max-w-sm" />
+      <img id="detailsImage2" src="{{ url_for('static', filename='images/finalvotes.png') }}" alt="Details" class="hidden mx-auto my-4 w-full max-w-sm" />
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const toggleButton = document.getElementById('toggleDetails');
+        toggleButton.addEventListener('click', function() {
+          const detailsImage1 = document.getElementById('detailsImage1');
+          const detailsImage2 = document.getElementById('detailsImage2');
+      
+          if (detailsImage1.classList.contains('hidden')) {
+            detailsImage1.classList.remove('hidden');
+            detailsImage2.classList.remove('hidden');
+            toggleButton.textContent = 'Show Less';
+          } else {
+            detailsImage1.classList.add('hidden');
+            detailsImage2.classList.add('hidden');
+            toggleButton.textContent = 'Show Details';
+          }
+        });
+      });
+    </script>
+  </body>
 </html>

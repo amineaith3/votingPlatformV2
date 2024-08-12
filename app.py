@@ -145,7 +145,7 @@ def index():
     if checktime():
         return redirect(url_for('register'))
     else:
-        return render_template('countdown.html')
+        return redirect(url_for('login'))
 
 def load_students_data():
     students_data = []
@@ -245,7 +245,7 @@ def login():
 
         return render_template('login.html')
     else:
-        return render_template('countdown.html')
+        return render_template('results.html')
 
 @app.route('/vote/<email>', methods=['GET', 'POST'])
 @login_required
@@ -290,6 +290,10 @@ def logout():
     flask_session.pop('logged_in_email', None)
     flash('You have been logged out.', 'success')
     return redirect(url_for('login'))
+
+@app.route('/results', methods=['GET'])
+def results():
+    return render_template('results.html')
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
